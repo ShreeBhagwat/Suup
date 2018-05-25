@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dUR-XX-FUF">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -17,13 +17,50 @@
                     <view key="view" contentMode="scaleToFill" id="b0Z-E4-5UC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SuupFinal" translatesAutoresizingMaskIntoConstraints="NO" id="Ol4-IF-Fj0">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NrO-N8-bA8">
+                                <rect key="frame" x="66" y="567" width="242" height="52"/>
+                                <color key="backgroundColor" red="0.0" green="0.58980089430000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal">
+                                    <attributedString key="attributedTitle">
+                                        <fragment content="START MESSAGIN">
+                                            <attributes>
+                                                <color key="NSColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <font key="NSFont" size="22" name="ArialRoundedMTBold"/>
+                                                <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                            </attributes>
+                                        </fragment>
+                                        <fragment content="G">
+                                            <attributes>
+                                                <color key="NSColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <font key="NSFont" metaFont="system" size="22"/>
+                                                <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                            </attributes>
+                                        </fragment>
+                                    </attributedString>
+                                </state>
+                                <connections>
+                                    <segue destination="ffx-em-Urz" kind="show" identifier="goToWelcome" id="I2m-3k-zyh"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.78823529410000004" green="1" blue="0.94117647059999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="eGW-LK-oz2" firstAttribute="trailing" secondItem="NrO-N8-bA8" secondAttribute="trailing" constant="67" id="6t6-VD-hJb"/>
+                            <constraint firstItem="NrO-N8-bA8" firstAttribute="leading" secondItem="eGW-LK-oz2" secondAttribute="leading" constant="66" id="9vK-Mx-IWp"/>
+                            <constraint firstItem="Ol4-IF-Fj0" firstAttribute="top" secondItem="eGW-LK-oz2" secondAttribute="top" id="IhK-nE-xPf"/>
+                            <constraint firstItem="eGW-LK-oz2" firstAttribute="bottom" secondItem="NrO-N8-bA8" secondAttribute="bottom" constant="48" id="MYc-cO-XIA"/>
+                            <constraint firstItem="Ol4-IF-Fj0" firstAttribute="bottom" secondItem="eGW-LK-oz2" secondAttribute="bottom" id="cOQ-bA-cgU"/>
+                            <constraint firstItem="Ol4-IF-Fj0" firstAttribute="leading" secondItem="eGW-LK-oz2" secondAttribute="leading" id="eZx-It-io3"/>
+                            <constraint firstItem="Ol4-IF-Fj0" firstAttribute="trailing" secondItem="eGW-LK-oz2" secondAttribute="trailing" id="pOZ-c2-nMb"/>
+                            <constraint firstItem="NrO-N8-bA8" firstAttribute="top" secondItem="eGW-LK-oz2" secondAttribute="top" constant="503" id="w4k-Tw-vj8"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="eGW-LK-oz2"/>
                     </view>
                     <navigationItem key="navigationItem" id="TqJ-2g-tHb"/>
-                    <connections>
-                        <segue destination="ffx-em-Urz" kind="show" id="08X-51-68l"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="q5b-IZ-20A" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -36,17 +73,54 @@
                     <view key="view" contentMode="scaleToFill" id="mb1-x7-scU">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="background_1" translatesAutoresizingMaskIntoConstraints="NO" id="CtP-I6-T50">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="88P-lb-tqO">
+                                <rect key="frame" x="24" y="541" width="327" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.0" green="0.55686274509803924" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal">
+                                    <attributedString key="attributedTitle">
+                                        <fragment content="LOG IN">
+                                            <attributes>
+                                                <color key="NSColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <font key="NSFont" size="25" name="ArialRoundedMTBold"/>
+                                                <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                            </attributes>
+                                        </fragment>
+                                    </attributedString>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j95-bp-uav">
+                                <rect key="frame" x="24" y="604" width="327" height="43"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.0" green="0.5568627451" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal">
+                                    <attributedString key="attributedTitle">
+                                        <fragment content="REGISTER">
+                                            <attributes>
+                                                <color key="NSColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <font key="NSFont" size="26" name="ArialRoundedMTBold"/>
+                                            </attributes>
+                                        </fragment>
+                                    </attributedString>
+                                </state>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.78823529410000004" green="1" blue="0.94117647059999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="Emb-vF-sge"/>
                     </view>
                     <connections>
-                        <segue destination="qV6-rA-06f" kind="show" id="va4-iA-pEN"/>
-                        <segue destination="RFC-XV-CNA" kind="show" id="18K-q4-yHe"/>
+                        <segue destination="qV6-rA-06f" kind="show" identifier="goToRegister" id="va4-iA-pEN"/>
+                        <segue destination="RFC-XV-CNA" kind="show" identifier="goToLogin" id="18K-q4-yHe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Eeu-M0-nuS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5482" y="-887"/>
+            <point key="canvasLocation" x="-5484" y="-899.10044977511257"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="qls-IJ-O2s">
@@ -59,7 +133,7 @@
                         <viewLayoutGuide key="safeArea" id="wtT-n1-5O8"/>
                     </view>
                     <connections>
-                        <segue destination="29w-zg-YW0" kind="show" id="Otd-IM-cIo"/>
+                        <segue destination="29w-zg-YW0" kind="show" identifier="goToChat" id="Otd-IM-cIo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f1t-qq-1tz" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -75,7 +149,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="jxJ-yy-y27">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Chat" id="jxJ-yy-y27">
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jxJ-yy-y27" id="jbZ-X2-Ejc">
@@ -105,7 +179,7 @@
                         <viewLayoutGuide key="safeArea" id="3uT-nF-gjU"/>
                     </view>
                     <connections>
-                        <segue destination="29w-zg-YW0" kind="show" id="xd0-5g-qGN"/>
+                        <segue destination="29w-zg-YW0" kind="show" identifier="goToChat" id="xd0-5g-qGN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Gbv-eJ-T5D" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -131,6 +205,10 @@
             <point key="canvasLocation" x="-7159.1999999999998" y="-899.10044977511257"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="SuupFinal" width="320" height="568"/>
+        <image name="background_1" width="320" height="568"/>
+    </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Otd-IM-cIo"/>
     </inferredMetricsTieBreakers>

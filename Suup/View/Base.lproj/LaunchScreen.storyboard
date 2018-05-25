@@ -18,15 +18,20 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="supp" translatesAutoresizingMaskIntoConstraints="NO" id="JMK-v5-KWY">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SuupFinal" translatesAutoresizingMaskIntoConstraints="NO" id="JMK-v5-KWY">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="tintColor" red="0.78823529411764703" green="1" blue="0.94117647058823528" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="JMK-v5-KWY" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="8e1-Oo-bsi"/>
+                            <constraint firstItem="JMK-v5-KWY" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="8t3-dk-YMe"/>
+                            <constraint firstItem="JMK-v5-KWY" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="BJn-KX-OHo"/>
                             <constraint firstItem="JMK-v5-KWY" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="Kyq-G9-Nfa"/>
+                            <constraint firstItem="JMK-v5-KWY" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="PSm-ge-bd3"/>
                             <constraint firstItem="JMK-v5-KWY" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="RsJ-d2-fbB"/>
+                            <constraint firstItem="JMK-v5-KWY" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Xr5-nF-yMs"/>
                             <constraint firstItem="JMK-v5-KWY" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="usO-fF-kl9"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -38,6 +43,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="supp" width="320" height="568"/>
+        <image name="SuupFinal" width="320" height="568"/>
     </resources>
 </document>
