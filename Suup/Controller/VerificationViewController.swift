@@ -7,15 +7,31 @@
 //
 
 import UIKit
+import FirebaseAuth
+class VerificationViewController: UIViewController {
 
-class RegisterViewController: UIViewController {
-
+    @IBOutlet weak var VerificationCode: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
 
+    @IBAction func Verify(_ sender: Any) {
+        let defaults = UserDefaults.standard
+        
+        let credential = PhoneAuthProvider.provider().credential( withVerificationID: defaults.string(forKey: "authVID")!, verificationCode: VerificationCode.text!)
+        
+        Auth.auth().signInAndRetrieveData(with: credential) { (authResult, error) in
+            if error != nil {
+                print("error \(String(describing: error?.localizedDescription))")
+            } else {
+                print("Signed In")
+                self.performSegue(withIdentifier: "goToLoggedin", sender: self)
+            }
+           
+        }
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
