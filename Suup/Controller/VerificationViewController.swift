@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseAuth
+
 class VerificationViewController: UIViewController {
 
     @IBOutlet weak var VerificationCode: UITextField!
@@ -20,16 +21,13 @@ class VerificationViewController: UIViewController {
     @IBAction func Verify(_ sender: Any) {
         let defaults = UserDefaults.standard
         
-        let credential = PhoneAuthProvider.provider().credential( withVerificationID: defaults.string(forKey: "authVID")!, verificationCode: VerificationCode.text!)
-        
+        let credential: PhoneAuthCredential = PhoneAuthProvider.provider().credential(withVerificationID: defaults.string(forKey: "authverificationID")!, verificationCode: VerificationCode.text!)
         Auth.auth().signInAndRetrieveData(with: credential) { (authResult, error) in
             if error != nil {
-                print("error \(String(describing: error?.localizedDescription))")
-            } else {
-                print("Signed In")
+                print("error? \(String(describing: error?.localizedDescription))")
+            }else {
                 self.performSegue(withIdentifier: "goToLoggedin", sender: self)
             }
-           
         }
     }
     override func didReceiveMemoryWarning() {
