@@ -17,15 +17,44 @@ class VerificationViewController: UIViewController {
 
         // Do any additional setup after loading the view.
     }
-
+    
+//    func VerifyCode (){
+//        let defaults = UserDefaults.standard
+//        let credential: PhoneAuthCredential = PhoneAuthProvider.provider().credential(withVerificationID: defaults.string(forKey: "authverificationID")!, verificationCode: VerificationCode.text!)
+//        Auth.auth().signInAndRetrieveData(with: credential) { (authResult, error) in
+//            if error != nil {
+//            let alert = UIAlertController(title: "Invalid Verification Code", message: "The Verification Code does Not Match, Please Try Again", preferredStyle: .alert)
+//
+//                let action = UIAlertAction(title: "Try Again", style: .default , handler: { (UIAlertAction) in
+//
+//                })
+//            alert.addAction(action)
+//            self.present(alert, animated: true, completion: nil)
+//            } else {
+//                self.performSegue(withIdentifier: "goToLoggedin", sender: self)
+//            }
+//            }
+//
+//    }
+//
+    
     @IBAction func Verify(_ sender: Any) {
-        let defaults = UserDefaults.standard
         
+        let defaults = UserDefaults.standard
+
         let credential: PhoneAuthCredential = PhoneAuthProvider.provider().credential(withVerificationID: defaults.string(forKey: "authverificationID")!, verificationCode: VerificationCode.text!)
         Auth.auth().signInAndRetrieveData(with: credential) { (authResult, error) in
             if error != nil {
-                print("error? \(String(describing: error?.localizedDescription))")
+                
+                let alert = UIAlertController(title: "Invalid Verification Code", message: "The Verification Code does Not Match, Please Try Again", preferredStyle: .alert)
+
+                let action = UIAlertAction(title: "Try Again", style: .default , handler: { (UIAlertAction) in
+                    })
+                 alert.addAction(action)
+                self.present(alert, animated: true, completion: nil)
+
             }else {
+               let userInfo = authResult?.user
                 self.performSegue(withIdentifier: "goToLoggedin", sender: self)
             }
         }

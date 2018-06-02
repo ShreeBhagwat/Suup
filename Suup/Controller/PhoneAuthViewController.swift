@@ -24,7 +24,7 @@ class PhoneAuthViewController: UIViewController {
             PhoneAuthProvider.provider().verifyPhoneNumber(self.PhoneNumber.text!, uiDelegate: nil) { (verificationID, error) in
                 if error != nil {
                     print("error: \(String(describing: error?.localizedDescription))")
-                }else {
+                    }else {
                     let defaults = UserDefaults.standard
                     defaults.setValue(verificationID, forKey: "authverificationID")
                     self.performSegue(withIdentifier: "goToVerification", sender: self)
