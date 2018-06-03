@@ -53,6 +53,9 @@
                         <viewLayoutGuide key="safeArea" id="eGW-LK-oz2"/>
                     </view>
                     <navigationItem key="navigationItem" id="TqJ-2g-tHb"/>
+                    <connections>
+                        <segue destination="29w-zg-YW0" kind="show" identifier="goToChatDirectly" id="aOs-iG-4oC"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="q5b-IZ-20A" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -226,7 +229,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pYO-X4-yjj" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="eED-aN-4Og" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-4756.521739130435" y="-899.18478260869574"/>
+            <point key="canvasLocation" x="-4743" y="-960"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="bOh-8E-qtr">
@@ -275,7 +278,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="k9C-U0-wsf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3927.5362318840585" y="-896.73913043478262"/>
+            <point key="canvasLocation" x="-3886" y="-953"/>
         </scene>
         <!--Profile View Controller-->
         <scene sceneID="sh5-NB-eer">
@@ -312,6 +315,7 @@
                                     </attributedString>
                                 </state>
                                 <connections>
+                                    <action selector="DoneButtonPressed:" destination="tVv-Lh-liz" eventType="touchUpInside" id="F7G-3w-0tf"/>
                                     <segue destination="29w-zg-YW0" kind="show" identifier="goToChat" id="ghS-8Y-gRu"/>
                                 </connections>
                             </button>
@@ -326,12 +330,16 @@
                         <color key="backgroundColor" red="0.78823529410000004" green="1" blue="0.94117647059999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="W8R-js-m1G"/>
                     </view>
+                    <connections>
+                        <outlet property="NameText" destination="xZb-b2-HXM" id="DDh-vr-opK"/>
+                        <outlet property="profilePicture" destination="Sef-42-OKc" id="l2R-OZ-vhB"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XpJ-l2-yk3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-3136.2318840579715" y="-897.554347826087"/>
         </scene>
-        <!--Chat Table View Controller-->
+        <!--Title-->
         <scene sceneID="G9w-dg-91m">
             <objects>
                 <tableViewController id="29w-zg-YW0" customClass="ChatTableViewController" customModule="Suup" customModuleProvider="target" sceneMemberID="viewController">
@@ -354,10 +362,19 @@
                             <outlet property="delegate" destination="29w-zg-YW0" id="gCB-5X-kcT"/>
                         </connections>
                     </tableView>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="Title" id="TQj-84-QdH">
+                        <barButtonItem key="rightBarButtonItem" title="Log Out" id="F0W-nL-zBv">
+                            <connections>
+                                <action selector="LogoutButtonPressed:" destination="29w-zg-YW0" id="f2B-o6-ytO"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="t0K-hm-C2L" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2425" y="-900"/>
+            <point key="canvasLocation" x="-2275" y="-897"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="13O-zr-duY">
@@ -382,4 +399,7 @@
         <image name="SuupFinal" width="320" height="568"/>
         <image name="background_1" width="320" height="568"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="ghS-8Y-gRu"/>
+    </inferredMetricsTieBreakers>
 </document>

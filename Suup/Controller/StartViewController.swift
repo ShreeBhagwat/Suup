@@ -14,9 +14,24 @@ class StartViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
     }
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        
+        Auth.auth().addStateDidChangeListener() { auth, user in
+            // 2
+            if user != nil {
+                // 3
+                print("\(String(describing: user?.phoneNumber))")
+                self.performSegue(withIdentifier: "goToChatDirectly", sender: nil)
+            }
+        }
+    }
+    
+    
     @IBAction func StartButtonPressed(_ sender: UIButton) {
     print("Please put Number for verification")
 //       

@@ -16,12 +16,17 @@ class ProfileViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
 
+    @IBOutlet weak var NameText: UITextField!
+   
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-
+    @IBOutlet weak var profilePicture: UIImageView!
+    @IBAction func DoneButtonPressed(_ sender: UIButton) {
+    }
+    
     /*
     // MARK: - Navigation
 

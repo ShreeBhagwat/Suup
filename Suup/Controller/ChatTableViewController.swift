@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseAuth
 
 class ChatTableViewController: UITableViewController {
 
@@ -91,5 +93,20 @@ class ChatTableViewController: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     */
+   
+    
+    // Log Out User
+    
+    @IBAction func LogoutButtonPressed(_ sender: UIBarButtonItem) {
+    let firebaseAuth = Auth.auth()
+        do {
+            try firebaseAuth.signOut()
+            navigationController?.popToRootViewController(animated: true)
+            
+        } catch let signOutError as NSError {
+                print("Error signing out: %@", signOutError)
+            }
+        }
+    }
+    
 
-}

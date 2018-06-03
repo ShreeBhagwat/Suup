@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
+    
         if #available(iOS 10, *){
             UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]){(granted, error) in }
             application.registerForRemoteNotifications()
@@ -28,10 +29,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
             let notificationSettings = UIUserNotificationSettings(types: [.alert,.badge,.sound], categories: nil)
             UIApplication.shared.registerUserNotificationSettings(notificationSettings)
             UIApplication.shared.registerForRemoteNotifications()
+            
         }
-        
         let myDatabase = Database.database().reference()
-        myDatabase.setValue("We have got data!")
+            myDatabase.setValue("We have got data!")
         
         return true
     }
@@ -59,5 +60,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
     }
 
 
-}
 
+
+}

@@ -103,8 +103,8 @@
 				D05F717B20B6EB7C00A22E59 /* PhoneAuthViewController.swift */,
 				D05F717920B6EB6A00A22E59 /* VerificationViewController.swift */,
 				D01CE3BC20C01465001F7AC4 /* LoginViewController.swift */,
-				D05F718120B7142200A22E59 /* ChatTableViewController.swift */,
 				D0AD0BE420C2BDB300E35427 /* ProfileViewController.swift */,
+				D05F718120B7142200A22E59 /* ChatTableViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";

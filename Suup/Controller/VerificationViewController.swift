@@ -43,7 +43,7 @@ class VerificationViewController: UIViewController {
         let defaults = UserDefaults.standard
 
         let credential: PhoneAuthCredential = PhoneAuthProvider.provider().credential(withVerificationID: defaults.string(forKey: "authverificationID")!, verificationCode: VerificationCode.text!)
-        Auth.auth().signInAndRetrieveData(with: credential) { (authResult, error) in
+        Auth.auth().signInAndRetrieveData(with: credential) { (user, error) in
             if error != nil {
                 
                 let alert = UIAlertController(title: "Invalid Verification Code", message: "The Verification Code does Not Match, Please Try Again", preferredStyle: .alert)
@@ -54,7 +54,8 @@ class VerificationViewController: UIViewController {
                 self.present(alert, animated: true, completion: nil)
 
             }else {
-               let userInfo = authResult?.user
+               let userData = Auth.auth().currentUser?.phoneNumber
+                print("\(String(describing: userData))")
                 self.performSegue(withIdentifier: "goToLoggedin", sender: self)
             }
         }
