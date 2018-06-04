@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import FirebaseAuth
 
-class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     
     
    
@@ -19,7 +19,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     //MARK:- IBoutlests
+   
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
+    
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var messageTableView: UITableView!
@@ -27,8 +29,15 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     override func viewDidLoad() {
         super.viewDidLoad()
+       
+        //TODO: TableView Delegate
+        
         messageTableView.delegate = self
         messageTableView.dataSource = self
+        
+        //TODO: TextField Delegate
+        messageTextField.delegate = self
+        
         
         
         //TODO: Register Message XIB file
@@ -70,12 +79,42 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     //TODO: Declare Tableviwe Tapped here
     
+    
+    
     //TODO: Declare configureTableview  here
     
     func configureTableView(){
         messageTableView.rowHeight = UITableViewAutomaticDimension
         messageTableView.estimatedRowHeight = 120.0
     }
+    
+    /////////////////////////////////////////
+    
+    //MARK:- TextField Delegate Methods
+    
+    
+    //TODO:- textFieldDidBeginEditing here:
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+       
+        UIView.animate(withDuration: 0.5){
+            self.heightConstraint.constant = 330
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    //TODO: textFieldDidEndEditing here.
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        
+    }
+    
+    //////////////////////////////////////////
+    //MARK:- sendButtonPressed
+    
+    @IBAction func sendButtonPressed(_ sender: Any) {
+    }
+    
+    
     
     
     
