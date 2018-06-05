@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseAuth
+import SVProgressHUD
 
 class PhoneAuthViewController: UIViewController {
 
@@ -21,10 +22,12 @@ class PhoneAuthViewController: UIViewController {
         let alert = UIAlertController(title: "Phone Number", message: "Is this your Phone Number \(PhoneNumber.text!)", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Yes", style: .default) { (UIAlertAction) in
+            SVProgressHUD.show()
             PhoneAuthProvider.provider().verifyPhoneNumber(self.PhoneNumber.text!, uiDelegate: nil) { (verificationID, error) in
                 if error != nil {
                     print("error: \(String(describing: error?.localizedDescription))")
                     }else {
+                    SVProgressHUD.dismiss()
                     let defaults = UserDefaults.standard
                     defaults.setValue(verificationID, forKey: "authverificationID")
                     self.performSegue(withIdentifier: "goToVerification", sender: self)

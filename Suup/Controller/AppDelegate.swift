@@ -31,8 +31,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
             UIApplication.shared.registerForRemoteNotifications()
             
         }
-        let myDatabase = Database.database().reference()
-            myDatabase.setValue("We have got data!")
+       
+        
         
         return true
     }
