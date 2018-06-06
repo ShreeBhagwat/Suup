@@ -71,10 +71,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background_1" translatesAutoresizingMaskIntoConstraints="NO" id="CtP-I6-T50">
-                                <rect key="frame" x="0.0" y="64" width="414" height="672"/>
+                                <rect key="frame" x="0.0" y="64" width="413" height="672"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j95-bp-uav">
-                                <rect key="frame" x="81" y="336" width="252" height="42"/>
+                                <rect key="frame" x="81" y="336" width="251" height="42"/>
                                 <color key="backgroundColor" red="0.0" green="0.5568627451" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <state key="normal">
                                     <attributedString key="attributedTitle">
@@ -92,13 +92,13 @@
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Phone Number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="B3d-7h-tWf">
-                                <rect key="frame" x="38" y="231" width="339" height="30"/>
+                                <rect key="frame" x="38" y="231" width="338" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="phonePad" smartDashesType="yes" textContentType="tel"/>
                             </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="SuuP Will send a SMS to Verify your Phone Number. Enter your Country Code and Phone Number" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="u2K-P9-Uk2">
-                                <rect key="frame" x="38" y="122" width="339" height="72"/>
+                                <rect key="frame" x="38" y="122" width="338" height="72"/>
                                 <color key="backgroundColor" red="0.78823529410000004" green="1" blue="0.94117647059999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="72" id="lnJ-vk-ygb"/>
@@ -107,7 +107,7 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8kM-e0-ghX">
-                                <rect key="frame" x="88" y="78" width="245" height="26"/>
+                                <rect key="frame" x="88" y="78" width="244" height="26"/>
                                 <attributedString key="attributedText">
                                     <fragment content="Enter Phone Number">
                                         <attributes>
@@ -369,7 +369,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <viewLayoutGuide key="safeArea" id="kAt-Bb-3Se"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Chat" id="jxJ-yy-y27">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Chat" id="jxJ-yy-y27">
                                         <rect key="frame" x="0.0" y="28" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jxJ-yy-y27" id="jbZ-X2-Ejc">
@@ -382,17 +382,19 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SiS-f2-Zkw">
                                 <rect key="frame" x="0.0" y="679" width="414" height="57"/>
                                 <subviews>
-                                    <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Your Message" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="MQd-CE-4GV">
-                                        <rect key="frame" x="8" y="13" width="319" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Your Message" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="MQd-CE-4GV">
+                                        <rect key="frame" x="14" y="13" width="313" height="30"/>
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HsO-vy-lI3">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HsO-vy-lI3">
                                         <rect key="frame" x="335" y="13" width="67" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="68o-VB-agt"/>
+                                            <constraint firstAttribute="width" constant="67" id="9MS-Du-qAx"/>
+                                        </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="21"/>
                                         <state key="normal" title="Send">
                                             <color key="titleColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -405,6 +407,11 @@
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="57" id="6Qt-9i-byf"/>
+                                    <constraint firstItem="MQd-CE-4GV" firstAttribute="top" secondItem="SiS-f2-Zkw" secondAttribute="top" constant="13" id="JN4-28-uWX"/>
+                                    <constraint firstItem="HsO-vy-lI3" firstAttribute="leading" secondItem="MQd-CE-4GV" secondAttribute="trailing" constant="8" id="LBk-ZO-bGl"/>
+                                    <constraint firstItem="MQd-CE-4GV" firstAttribute="leading" secondItem="SiS-f2-Zkw" secondAttribute="leading" constant="14" id="RYK-5H-6sp"/>
+                                    <constraint firstAttribute="trailing" secondItem="HsO-vy-lI3" secondAttribute="trailing" constant="12" id="SF7-6V-IvY"/>
+                                    <constraint firstItem="HsO-vy-lI3" firstAttribute="top" secondItem="SiS-f2-Zkw" secondAttribute="top" constant="13" id="XC9-gD-u2T"/>
                                 </constraints>
                             </view>
                         </subviews>
