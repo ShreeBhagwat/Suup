@@ -187,7 +187,7 @@
                                 </connections>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dFq-iW-MBk">
-                                <rect key="frame" x="106.00000000000001" y="84" width="202.33333333333337" height="21"/>
+                                <rect key="frame" x="105.99999999999999" y="84" width="202.66666666666663" height="21"/>
                                 <attributedString key="attributedText">
                                     <fragment content="Verify Your Phone Number">
                                         <attributes>
@@ -369,7 +369,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <viewLayoutGuide key="safeArea" id="kAt-Bb-3Se"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Chat" id="jxJ-yy-y27">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Chat" id="jxJ-yy-y27">
                                         <rect key="frame" x="0.0" y="28" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jxJ-yy-y27" id="jbZ-X2-Ejc">
@@ -435,6 +435,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="bottomView" destination="Uhd-mg-MoC" id="ILf-iX-rkk"/>
                         <outlet property="heightConstraint" destination="6Qt-9i-byf" id="HaK-YH-cZE"/>
                         <outlet property="messageTableView" destination="yrw-2Z-Tyg" id="2QB-xa-H1v"/>
                         <outlet property="messageTextField" destination="MQd-CE-4GV" id="Hzl-Ng-fkc"/>

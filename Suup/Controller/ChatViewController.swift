@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import FirebaseAuth
 
-class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
+class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate,UITextViewDelegate {
     
     var messageArray : [Message] = [Message]()
     
@@ -19,13 +19,27 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     //MARK:- IBoutlests
    
+    @IBOutlet weak var bottomView: NSLayoutConstraint!
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
     
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var messageTableView: UITableView!
     
-
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear(notification:)), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillDisappear(notification:)), name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow , object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide , object: nil)
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
        
@@ -47,14 +61,43 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         configureTableView()
         retrieveMessages()
         messageTableView.separatorStyle = .none
-      
+        
+       
+    
     }
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    //MARK:- Keyboard Methods
+    @objc func keyboardWillAppear(notification: NSNotification?) {
+        
+        guard let keyboardFrame = notification?.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue else {
+            return
+        }
+        
+        let keyboardHeight: CGFloat
+        if #available(iOS 11.0, *) {
+            keyboardHeight = keyboardFrame.cgRectValue.height - self.view.safeAreaInsets.bottom
+            print("keyboardHeight\(keyboardHeight)")
+            
+        } else {
+            keyboardHeight = keyboardFrame.cgRectValue.height
+        }
     
+        bottomView.constant = keyboardHeight
+        self.heightConstraint.constant = 57 + keyboardHeight
+        print("Bottom View\(bottomView.constant)")
     
+    }
+    
+    @objc func keyboardWillDisappear(notification: NSNotification?) {
+        self.heightConstraint.constant = 57
+        bottomView.constant = 0
+        print("bottomview closed\(bottomView.constant)")
+    }
     ////////////////////////////////////////
     //MARK:-tableViewDataSource
     
@@ -77,6 +120,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     //TODO: numberOfRowsInSection
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+      
         return messageArray.count
     }
     
@@ -96,25 +140,30 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     /////////////////////////////////////////
     
     //MARK:- TextField Delegate Methods
-    
-    
+
+
     //TODO:- textFieldDidBeginEditing here:
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-       
-        UIView.animate(withDuration: 0.5){
-            self.heightConstraint.constant = 330
-            self.view.layoutIfNeeded()
-        }
-    }
-    
-    //TODO: textFieldDidEndEditing here.
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        UIView.animate(withDuration: 0.5) {
-            self.heightConstraint.constant = 50
-            self.view.layoutIfNeeded()
-        }
-    }
+//    func textFieldDidBeginEditing(_ textField: UITextField) {
+//
+//        UIView.animate(withDuration: 0.5){
+//            self.heightConstraint.constant = 330
+//            self.view.layoutIfNeeded()
+//
+//
+//        }
+//    }
+//
+//    //TODO: textFieldDidEndEditing here.
+//    func textFieldDidEndEditing(_ textField: UITextField) {
+//        UIView.animate(withDuration: 0.5) {
+//            self.heightConstraint.constant = 50
+//            self.view.layoutIfNeeded()
+//
+//        }
+//    }
+//
+//
     
     //////////////////////////////////////////
     //MARK:- sendButtonPressed
@@ -162,8 +211,10 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             self.messageArray.append(message)
             self.configureTableView()
             self.messageTableView.reloadData()
+           
         }
     }
+    //MARK:- ScrollToBottom Method
     
     
     /////////////////////////////////////////
@@ -183,3 +234,4 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     }
+
