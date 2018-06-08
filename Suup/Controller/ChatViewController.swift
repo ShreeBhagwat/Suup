@@ -19,6 +19,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     //MARK:- IBoutlests
    
+    
     @IBOutlet weak var bottomView: NSLayoutConstraint!
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
     
@@ -29,6 +30,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+    
+        
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear(notification:)), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillDisappear(notification:)), name: .UIKeyboardWillHide, object: nil)
     }
@@ -62,8 +65,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         retrieveMessages()
         messageTableView.separatorStyle = .none
         
-       
-    
     }
     
     
@@ -73,30 +74,43 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     //MARK:- Keyboard Methods
     @objc func keyboardWillAppear(notification: NSNotification?) {
-        
         guard let keyboardFrame = notification?.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue else {
             return
         }
-        
         let keyboardHeight: CGFloat
         if #available(iOS 11.0, *) {
             keyboardHeight = keyboardFrame.cgRectValue.height - self.view.safeAreaInsets.bottom
             print("keyboardHeight\(keyboardHeight)")
-            
         } else {
             keyboardHeight = keyboardFrame.cgRectValue.height
         }
-    
-        bottomView.constant = keyboardHeight
+        
         self.heightConstraint.constant = 57 + keyboardHeight
-        print("Bottom View\(bottomView.constant)")
-    
+        var keyboardSize = keyboardHeight
+        var contentInsets: UIEdgeInsets
+        if UIInterfaceOrientationIsPortrait(UIApplication.shared.statusBarOrientation) {
+            
+            contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize, 0.0);
+        }
+        else {
+            contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize, 0.0);
+            
+        }
+        let indexPath = NSIndexPath(row: (messageArray.count-1), section: 0)
+        messageTableView.contentInset = contentInsets
+        
+        messageTableView.scrollToRow(at: indexPath as IndexPath, at: .top, animated: true)
+        messageTableView.scrollIndicatorInsets = messageTableView.contentInset
     }
     
+
     @objc func keyboardWillDisappear(notification: NSNotification?) {
+    
+        messageTableView.contentInset = UIEdgeInsets.zero
+        messageTableView.scrollIndicatorInsets = UIEdgeInsets.zero
         self.heightConstraint.constant = 57
-        bottomView.constant = 0
-        print("bottomview closed\(bottomView.constant)")
+        bottomView.constant = 57
+       
     }
     ////////////////////////////////////////
     //MARK:-tableViewDataSource
