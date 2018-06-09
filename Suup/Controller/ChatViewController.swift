@@ -64,8 +64,26 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         configureTableView()
         retrieveMessages()
         messageTableView.separatorStyle = .none
+   
         
     }
+        func messageTableView(_messageTableview: UITableView,willDisplayCell:UITableView, forRowAt indexPath: IndexPath){
+            
+            if let lastVisibleIndexPath = messageTableView.indexPathsForVisibleRows?.last {
+                if indexPath == lastVisibleIndexPath {
+                    print("Hello")
+        }
+      
+    }
+}
+//            let indexPath = NSIndexPath(row: (messageArray.count-1), section: 0)
+//            messageTableView.scrollToRow(at: indexPath as IndexPath, at: .bottom, animated: true)
+//            messageTableView.scrollIndicatorInsets = messageTableView.contentInset
+            
+        
+    
+
+    
     
     
     override func didReceiveMemoryWarning() {
@@ -247,5 +265,5 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
     
-    }
 
+}
