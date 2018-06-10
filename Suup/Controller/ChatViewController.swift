@@ -15,11 +15,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     var messageArray : [Message] = [Message]()
     
     
-    
+    ////////////////////////////////////////////////////
     
     //MARK:- IBoutlests
-   
-    
     @IBOutlet weak var bottomView: NSLayoutConstraint!
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
     
@@ -28,15 +26,16 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var messageTableView: UITableView!
     var heightAtIndexPath = NSMutableDictionary()
     
+    
+    ////////////////////////////////////////////////////
+    //MARK:- TableView Did Appear and Disappear methods
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     
-        
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear(notification:)), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillDisappear(notification:)), name: .UIKeyboardWillHide, object: nil)
     
-       
-        
 }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -44,11 +43,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow , object: nil)
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide , object: nil)
         
-        
-        
     }
     
-    
+    ////////////////////////////////////////////////////
     override func viewDidLoad() {
         super.viewDidLoad()
        
@@ -83,7 +80,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     
-    
+    ////////////////////////////////////////////////////
     //MARK:- Keyboard Methods
     @objc func keyboardWillAppear(notification: NSNotification?) {
         guard let keyboardFrame = notification?.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue else {
@@ -98,7 +95,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
         
         self.heightConstraint.constant = 57 + keyboardHeight
-        var keyboardSize = keyboardHeight
+        let keyboardSize = keyboardHeight
         let contentInsets: UIEdgeInsets
         if UIInterfaceOrientationIsPortrait(UIApplication.shared.statusBarOrientation) {
             
@@ -127,9 +124,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
   
     ////////////////////////////////////////
     //MARK:-tableViewDataSource
-    
-    
-
     //TODO: cellForRowAtIndexPath
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -141,10 +135,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         return cell
     }
-    
-    
-    
-    
+
     //TODO: numberOfRowsInSection
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
       
@@ -184,30 +175,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     /////////////////////////////////////////
     
     //MARK:- TextField Delegate Methods
-
-
-    //TODO:- textFieldDidBeginEditing here:
     
-//    func textFieldDidBeginEditing(_ textField: UITextField) {
-//
-//        UIView.animate(withDuration: 0.5){
-//            self.heightConstraint.constant = 330
-//            self.view.layoutIfNeeded()
-//
-//
-//        }
-//    }
-//
-//    //TODO: textFieldDidEndEditing here.
-//    func textFieldDidEndEditing(_ textField: UITextField) {
-//        UIView.animate(withDuration: 0.5) {
-//            self.heightConstraint.constant = 50
-//            self.view.layoutIfNeeded()
-//
-//        }
-//    }
-//
-//
+
     
     //////////////////////////////////////////
     //MARK:- sendButtonPressed
