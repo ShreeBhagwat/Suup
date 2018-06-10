@@ -26,7 +26,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var messageTableView: UITableView!
-    
+    var heightAtIndexPath = NSMutableDictionary()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -34,12 +34,18 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear(notification:)), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillDisappear(notification:)), name: .UIKeyboardWillHide, object: nil)
-    }
+    
+       
+        
+}
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow , object: nil)
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide , object: nil)
+        
+        
+        
     }
     
     
@@ -47,6 +53,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
        
         //TODO: TableView Delegate
+        textDidChange()
         
         messageTableView.delegate = self
         messageTableView.dataSource = self
@@ -65,31 +72,18 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         retrieveMessages()
         messageTableView.separatorStyle = .none
    
+        messageTableView.rowHeight = UITableViewAutomaticDimension
         
     }
-        func messageTableView(_messageTableview: UITableView,willDisplayCell:UITableView, forRowAt indexPath: IndexPath){
-            
-            if let lastVisibleIndexPath = messageTableView.indexPathsForVisibleRows?.last {
-                if indexPath == lastVisibleIndexPath {
-                    print("Hello")
-        }
-      
-    }
-}
-//            let indexPath = NSIndexPath(row: (messageArray.count-1), section: 0)
-//            messageTableView.scrollToRow(at: indexPath as IndexPath, at: .bottom, animated: true)
-//            messageTableView.scrollIndicatorInsets = messageTableView.contentInset
-            
-        
-    
 
-    
-    
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    
+    
+    
     //MARK:- Keyboard Methods
     @objc func keyboardWillAppear(notification: NSNotification?) {
         guard let keyboardFrame = notification?.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue else {
@@ -105,7 +99,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         self.heightConstraint.constant = 57 + keyboardHeight
         var keyboardSize = keyboardHeight
-        var contentInsets: UIEdgeInsets
+        let contentInsets: UIEdgeInsets
         if UIInterfaceOrientationIsPortrait(UIApplication.shared.statusBarOrientation) {
             
             contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize, 0.0);
@@ -116,7 +110,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
         let indexPath = NSIndexPath(row: (messageArray.count-1), section: 0)
         messageTableView.contentInset = contentInsets
-        
         messageTableView.scrollToRow(at: indexPath as IndexPath, at: .top, animated: true)
         messageTableView.scrollIndicatorInsets = messageTableView.contentInset
     }
@@ -130,6 +123,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         bottomView.constant = 57
        
     }
+    
+  
     ////////////////////////////////////////
     //MARK:-tableViewDataSource
     
@@ -168,7 +163,24 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         messageTableView.rowHeight = UITableViewAutomaticDimension
         messageTableView.estimatedRowHeight = 120.0
     }
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        if let height = heightAtIndexPath.object(forKey: indexPath) as? NSNumber {
+            return CGFloat(height.floatValue)
+        } else {
+            return UITableViewAutomaticDimension
+        }
+    }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let height = NSNumber(value: Float(cell.frame.size.height))
+        heightAtIndexPath.setObject(height, forKey: indexPath as NSCopying)
+    }
+    
+    func textDidChange(){
+        messageTableView.reloadData()
+        self.messageTableView.layoutIfNeeded()
+        self.messageTableView.setContentOffset(CGPoint.zero, animated: true)
+    }
     /////////////////////////////////////////
     
     //MARK:- TextField Delegate Methods
@@ -224,6 +236,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.messageTextField.text = ""
             }
         }
+        
+      
     }
     
     //TODO: create the retrieveMessages method here
@@ -242,12 +256,13 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             
             self.messageArray.append(message)
             self.configureTableView()
+            
             self.messageTableView.reloadData()
-           
+            let indexPath = NSIndexPath(row: (self.messageArray.count-1), section: 0)
+            self.messageTableView?.scrollToRow(at: indexPath as IndexPath, at: .bottom, animated: true)
         }
     }
-    //MARK:- ScrollToBottom Method
-    
+
     
     /////////////////////////////////////////
     
