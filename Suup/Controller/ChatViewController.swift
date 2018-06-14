@@ -9,11 +9,12 @@
 import UIKit
 import Firebase
 import FirebaseAuth
+import SVProgressHUD
 
 class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate,UITextViewDelegate {
     
     var messageArray : [Message] = [Message]()
-    
+
     
     ////////////////////////////////////////////////////
     
@@ -212,6 +213,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     //TODO: create the retrieveMessages method here
     
     func retrieveMessages(){
+        SVProgressHUD.show()
         let messageDB = Database.database().reference().child("Messages")
         messageDB.observe(.childAdded) { (snapshot) in
             let snapshotValue = snapshot.value as! Dictionary<String,String>
@@ -229,6 +231,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             self.messageTableView.reloadData()
             let indexPath = NSIndexPath(row: (self.messageArray.count-1), section: 0)
             self.messageTableView?.scrollToRow(at: indexPath as IndexPath, at: .bottom, animated: true)
+            SVProgressHUD.dismiss()
         }
     }
 
