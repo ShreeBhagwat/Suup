@@ -16,6 +16,7 @@ import Firebase
 
 class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
     
+    var messageController : MessageController?
     var userArray :[User] = [User]()
   
     override func viewDidLoad() {
@@ -44,11 +45,11 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
     @IBAction func DoneButtonPressed(_ sender: UIButton) {
         let uid = Auth.auth().currentUser?.uid
         
-        guard let profleImage = self.profilePicture.image else{return}
-        if let uploadData = UIImageJPEGRepresentation(self.profilePicture.image!, 0.5){
+        guard self.profilePicture.image != nil else{return}
+        if let uploadData = UIImageJPEGRepresentation(self.profilePicture.image!, 0.1){
         
             let StorageRef = Storage.storage().reference()
-            let StorageRefChild = StorageRef.child("user_profile_pictures/\(uid).jpg")
+            let StorageRefChild = StorageRef.child("user_profile_pictures/\(String(describing: uid)).jpg")
             StorageRefChild.putData(uploadData, metadata: nil) { (metadata, err) in
                 if let err = err {
                     print("unable to upload Image into storage due to \(err)")
@@ -95,7 +96,11 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
                 print(err as Any)
                 return
             }
-            print("Saved User Successfully")
+//            self.messageController?.fetchUser()
+//            self.messageController?.navigationItem.title = values["userName"] as? String
+            let user = Users()
+            user.setValuesForKeys(values)
+            self.messageController?.navBarWithUser(user: user)
         })
     }
     

@@ -25,6 +25,7 @@
 		D0D1636320CED7F7008E81B0 /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D1636220CED7F7008E81B0 /* Users.swift */; };
 		D0D1636520CFE2F1008E81B0 /* NewMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D1636420CFE2F1008E81B0 /* NewMessageViewController.swift */; };
 		D0D1636820D25A1D008E81B0 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D1636720D25A1D008E81B0 /* Extension.swift */; };
+		D0D1636A20D3A02A008E81B0 /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D1636920D3A02A008E81B0 /* ChatLogController.swift */; };
 		D0FB1FCF20CEC4230092C92A /* MessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FB1FCE20CEC4230092C92A /* MessageController.swift */; };
 /* End PBXBuildFile section */
 
@@ -52,6 +53,7 @@
 		D0D1636220CED7F7008E81B0 /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 		D0D1636420CFE2F1008E81B0 /* NewMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMessageViewController.swift; sourceTree = "<group>"; };
 		D0D1636720D25A1D008E81B0 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		D0D1636920D3A02A008E81B0 /* ChatLogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
 		D0FB1FCE20CEC4230092C92A /* MessageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -118,8 +120,9 @@
 				D01CE3BC20C01465001F7AC4 /* LoginViewController.swift */,
 				D0AD0BE420C2BDB300E35427 /* ProfileViewController.swift */,
 				D0FB1FCE20CEC4230092C92A /* MessageController.swift */,
-				D05F718120B7142200A22E59 /* ChatViewController.swift */,
 				D0D1636420CFE2F1008E81B0 /* NewMessageViewController.swift */,
+				D0D1636920D3A02A008E81B0 /* ChatLogController.swift */,
+				D05F718120B7142200A22E59 /* ChatViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -370,6 +373,7 @@
 				D0D1636520CFE2F1008E81B0 /* NewMessageViewController.swift in Sources */,
 				D04F35B220B672230055617D /* AppDelegate.swift in Sources */,
 				D0D1636820D25A1D008E81B0 /* Extension.swift in Sources */,
+				D0D1636A20D3A02A008E81B0 /* ChatLogController.swift in Sources */,
 				D0AD0BE520C2BDB300E35427 /* ProfileViewController.swift in Sources */,
 				D05F718220B7142200A22E59 /* ChatViewController.swift in Sources */,
 				D0D1636320CED7F7008E81B0 /* Users.swift in Sources */,
