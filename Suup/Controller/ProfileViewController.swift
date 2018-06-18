@@ -67,17 +67,6 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
                 })
             }
             
-            
-//            imageRef.putData(uploadData, metadata: nil) { (metadata, error) in
-//                if error != nil{
-//                    print(error)
-//                    return
-//                }else {
-//                    let downloadUrl = metadata.downloadUrl()
-//                    let values = ["userName": self.NameText.text!,"phoneNumber":Auth.auth().currentUser?.phoneNumber,"userId":Auth.auth().currentUser?.uid,"profileImageUrl": metadata.downloadUrl()]
-//                    self.registerUserIntoDatabaseWithUid(uid: uid, values: <#T##[String : AnyObject]#>)
-//                }
-//            }
         }
       
         
