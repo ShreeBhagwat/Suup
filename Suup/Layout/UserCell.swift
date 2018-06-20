@@ -12,20 +12,8 @@ class UserCell : UITableViewCell {
     
     var message : Message? {
         didSet{
-            if let toId = message?.toId {
-                let ref = Database.database().reference().child("Users").child(toId)
-                ref.observe(.value, with: { (snapshot) in
-                    
-                    if let dictionary = snapshot.value as? [String: AnyObject]{
-                        self.textLabel?.text = dictionary["userName"] as? String
-                        
-                        if  let profileImageUrl = dictionary["profileImageUrl"]{
-                            self.profileImageView.loadImageFromCache(urlString: profileImageUrl as! String)
-                        }
-                    }
-                    
-                }, withCancel: nil)
-            }
+            
+            setupNameAndProfileImage()
             
            detailTextLabel?.text = message?.text
             
@@ -39,6 +27,24 @@ class UserCell : UITableViewCell {
             
            
      
+        }
+    }
+    
+    private func setupNameAndProfileImage(){
+        
+        if let Id = message?.chatPartnerId() {
+            let ref = Database.database().reference().child("Users").child(Id)
+            ref.observe(.value, with: { (snapshot) in
+                
+                if let dictionary = snapshot.value as? [String: AnyObject]{
+                    self.textLabel?.text = dictionary["userName"] as? String
+                    
+                    if  let profileImageUrl = dictionary["profileImageUrl"]{
+                        self.profileImageView.loadImageFromCache(urlString: profileImageUrl as! String)
+                    }
+                }
+                
+            }, withCancel: nil)
         }
     }
     
@@ -62,7 +68,7 @@ class UserCell : UITableViewCell {
     
     var timeLabel:UILabel = {
         let lable = UILabel()
-        lable.text = "HH:MM:SS"
+//        lable.text = "HH:MM:SS"
         lable.font = UIFont.systemFont(ofSize: 12)
         lable.textColor = UIColor.darkGray
         lable.translatesAutoresizingMaskIntoConstraints = false

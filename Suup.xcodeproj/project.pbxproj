@@ -22,6 +22,7 @@
 		D06FB21B20C41E5F00C9F204 /* CustomMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D06FB21920C41E5F00C9F204 /* CustomMessageCell.xib */; };
 		D06FB21D20C5935400C9F204 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = D06FB21C20C5935400C9F204 /* Message.swift */; };
 		D0AD0BE520C2BDB300E35427 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AD0BE420C2BDB300E35427 /* ProfileViewController.swift */; };
+		D0B6BB8320D88F83001A74C4 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B6BB8220D88F83001A74C4 /* ChatMessageCell.swift */; };
 		D0D1636320CED7F7008E81B0 /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D1636220CED7F7008E81B0 /* Users.swift */; };
 		D0D1636520CFE2F1008E81B0 /* NewMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D1636420CFE2F1008E81B0 /* NewMessageViewController.swift */; };
 		D0D1636820D25A1D008E81B0 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D1636720D25A1D008E81B0 /* Extension.swift */; };
@@ -51,6 +52,7 @@
 		D06FB21920C41E5F00C9F204 /* CustomMessageCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomMessageCell.xib; sourceTree = "<group>"; };
 		D06FB21C20C5935400C9F204 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		D0AD0BE420C2BDB300E35427 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		D0B6BB8220D88F83001A74C4 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		D0D1636220CED7F7008E81B0 /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
 		D0D1636420CFE2F1008E81B0 /* NewMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMessageViewController.swift; sourceTree = "<group>"; };
 		D0D1636720D25A1D008E81B0 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				D0D3FEF620D4D75E00995147 /* UserCell.swift */,
+				D0B6BB8220D88F83001A74C4 /* ChatMessageCell.swift */,
 			);
 			path = Layout;
 			sourceTree = "<group>";
@@ -379,6 +382,7 @@
 				D01CE3BD20C01465001F7AC4 /* LoginViewController.swift in Sources */,
 				D05F718020B7116900A22E59 /* StartViewController.swift in Sources */,
 				D06FB21D20C5935400C9F204 /* Message.swift in Sources */,
+				D0B6BB8320D88F83001A74C4 /* ChatMessageCell.swift in Sources */,
 				D05F717A20B6EB6A00A22E59 /* VerificationViewController.swift in Sources */,
 				D05F717C20B6EB7C00A22E59 /* PhoneAuthViewController.swift in Sources */,
 				D0D1636520CFE2F1008E81B0 /* NewMessageViewController.swift in Sources */,
