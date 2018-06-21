@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
+        Database.database().isPersistenceEnabled = true
     
         if #available(iOS 10, *){
             UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]){(granted, error) in }
