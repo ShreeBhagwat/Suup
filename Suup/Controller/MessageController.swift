@@ -8,12 +8,14 @@
 
 import UIKit
 import Firebase
+import UserNotifications
 
 class MessageController: UITableViewController, UINavigationControllerDelegate {
     let cellId = "cellId"
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         navigationItem.leftBarButtonItem  = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(logOut))
         
@@ -39,13 +41,14 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
         ref.observe(.childAdded, with: { (snapshot) in
             let userId = snapshot.key
             Database.database().reference().child("user-messages").child(uid).child(userId).observe(.childAdded, with: { (snapshot) in
-      
+        
                 let messageId = snapshot.key
                 self.fetchMessageWithMessageId(messageId: messageId)
+                ref.keepSynced(true)
             })
         }, withCancel: nil)
     }
-    
+   
     private func fetchMessageWithMessageId(messageId:String){
         let messagesReference = Database.database().reference().child("messages").child(messageId)
         messagesReference.observeSingleEvent(of: .value, with: { (snapshot) in
@@ -55,6 +58,7 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
                 
                 if let chatPartnerId = message.chatPartnerId(){
                     self.messageDictionary[chatPartnerId] = message
+                    
                 }
                 self.attemptReloadOfTable()
             }

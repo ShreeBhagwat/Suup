@@ -14,6 +14,7 @@ pod 'ChameleonFramework'
 pod 'FirebaseUI'
 pod 'FirebaseUI/Phone'
 pod 'FirebaseUI/Auth'
+pod 'FirebaseMessaging'
 
 end
 

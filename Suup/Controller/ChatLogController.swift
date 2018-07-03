@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import UserNotifications
 
 class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var user: Users? {
@@ -16,8 +17,28 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             oberveMessages()
         }
     }
-    var messages = [Message]()
     
+    
+    var messages = [Message]()
+//    func timedNotifications(inSeconds: TimeInterval, completion:@escaping (_ Success: Bool)->()){
+//        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: inSeconds, repeats: false)
+//
+//
+//        let content =  UNMutableNotificationContent()
+//
+//        content.title = "New Message"
+//        content.subtitle = Database.database().reference().child("Users")
+//        content.body = Database.database().reference().child("messages")
+//        let request = UNNotificationRequest(identifier: "customeNotification", content: content, trigger: trigger)
+//
+//        UNUserNotificationCenter.current().add(request) { (error) in
+//            if error != nil {
+//                completion(false)
+//            }else {
+//                completion(true)
+//            }
+//        }
+//    }
     func oberveMessages(){
         guard let uid = Auth.auth().currentUser?.uid, let toId = user?.id else {return}
         let userMessageRef = Database.database().reference().child("user-messages").child(uid).child(toId)
@@ -34,6 +55,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 
                 // do we need to attempt filtering anymore
              self.messages.append(Message(dictionary: dictionary))
+                messagesRef.keepSynced(true)
+                userMessageRef.keepSynced(true)
                 DispatchQueue.main.async {
                     self.collectionView?.reloadData()
                     let indexPath = NSIndexPath(item: self.messages.count - 1, section: 0)
@@ -170,32 +193,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
     }
     
-    
-/////////////////////////////////////////////////////////////////////////////
-//    guard self.profilePicture.image != nil else{return}
-//    if let uploadData = UIImageJPEGRepresentation(self.profilePicture.image!, 0.1){
-//
-//        let StorageRef = Storage.storage().reference()
-//        let StorageRefChild = StorageRef.child("user_profile_pictures/\(String(describing: uid)).jpg")
-//        StorageRefChild.putData(uploadData, metadata: nil) { (metadata, err) in
-//            if let err = err {
-//                print("unable to upload Image into storage due to \(err)")
-//            }
-//            StorageRefChild.downloadURL(completion: { (url, err) in
-//                if let err = err{
-//                    print("Unable to retrieve URL due to error: \(err.localizedDescription)")
-//                }
-//                let profilePicUrl = url?.absoluteString
-//                print("Profile Image successfully uploaded into storage with url: \(profilePicUrl ?? "" )")
-//
-//                let values = ["userName": self.NameText.text!,"phoneNumber":Auth.auth().currentUser?.phoneNumber,"userId":Auth.auth().currentUser?.uid,"profileImageUrl": profilePicUrl]
-//
-//                self.registerUserIntoDatabaseWithUid(uid: uid!, values: values as [String : AnyObject])
-//            })
-//        }
-//
-//    }
-/////////////////////////////////////////////////////////////////////////////
+
     override var inputAccessoryView: UIView?{
         get{
             return inputContainerView
@@ -272,15 +270,18 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ChatMessageCell
         
+        cell.chatLogController = self
         let message = messages[indexPath.item]
         cell.textView.text = message.text
         setupCell(cell: cell, message: message)
-      
+       
         // Bubblw View Modification
         if let text = message.text{
             cell.bubbleWidthAnchor?.constant = estimatedFrameForText(text: text).width + 32
+            cell.textView.isHidden = false
         } else if message.imageUrl != nil {
             cell.bubbleWidthAnchor?.constant = 200
+            cell.textView.isHidden = true
         }
         return cell
 
@@ -409,6 +410,98 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         sendButtonPressed()
         return true
+    }
+    var startingFrame : CGRect?
+    var zoomingImageView:UIImageView?
+    var blackBackgroundView: UIView?
+    var backButton:UIButton?
+    var startingImageView: UIImageView?
+    
+    // Image Zooming Logic
+    func performZoomInImages(startingImageView : UIImageView){
+        self.startingImageView = startingImageView
+        self.startingImageView?.isHidden = true
+        startingFrame = startingImageView.superview?.convert(startingImageView.frame, to: nil)
+        print(startingFrame)
+        
+        zoomingImageView = UIImageView(frame: startingFrame!)
+        self.zoomingImageView?.backgroundColor = UIColor.red
+        self.zoomingImageView?.image = startingImageView.image
+        
+        
+        
+        if let keyWindow = UIApplication.shared.keyWindow {
+            blackBackgroundView = UIView(frame: keyWindow.frame)
+            blackBackgroundView?.backgroundColor = UIColor.black
+            blackBackgroundView?.alpha = 0
+           
+            backButton = UIButton(type: .system)
+            backButton?.setTitle("Back", for: .normal)
+            backButton?.setTitleColor(UIColor.white, for: .normal)
+            backButton?.setImage(#imageLiteral(resourceName: "back"), for: .normal)
+            backButton?.translatesAutoresizingMaskIntoConstraints = false
+            backButton?.addTarget(self, action: #selector(imageBackButtonPressed), for: .touchUpInside)
+            
+            
+            keyWindow.addSubview(blackBackgroundView!)
+            keyWindow.addSubview(zoomingImageView!)
+            keyWindow.addSubview(backButton!)
+            
+            //Back Button Constraints
+            backButton?.leftAnchor.constraint(equalTo: (blackBackgroundView?.leftAnchor)!, constant: 10).isActive = true
+            backButton?.topAnchor.constraint(equalTo: (blackBackgroundView?.topAnchor)!, constant: 10).isActive = true
+            backButton?.widthAnchor.constraint(equalToConstant: 80).isActive = true
+            backButton?.heightAnchor.constraint(equalToConstant: 50).isActive = true
+//            let sendbutton = UIButton(type: .system)
+//            sendbutton.setTitle("Send", for: .normal)
+//            sendbutton.translatesAutoresizingMaskIntoConstraints = false
+//            sendbutton.addTarget(self, action: #selector(sendButtonPressed), for: .touchUpInside)
+//            containerView.addSubview(sendbutton)
+//            // Constraints x,y,width,height
+//            sendbutton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+//            sendbutton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+//            sendbutton.widthAnchor.constraint(equalToConstant: 80).isActive = true
+//            sendbutton.heightAnchor.constraint(equalTo: containerView.heightAnchor)
+//
+           
+            UIView.animate(withDuration: 0.5, delay: 0,usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+                
+                self.blackBackgroundView?.alpha = 1
+                self.inputContainerView.alpha = 0
+                self.backButton?.isHidden = false
+                self.backButton?.isEnabled = true
+                //Maths
+                //h2 / w1 = h1/w1
+                //h2 = h1/w1*w1
+                
+                let height = (self.startingFrame?.height)! / (self.startingFrame?.width)! * keyWindow.frame.width
+                
+                self.zoomingImageView?.frame = CGRect(x: 0, y: 0, width: keyWindow.frame.width, height: height)
+                
+                self.zoomingImageView?.center = keyWindow.center
+            }, completion: nil)
+    
+        }
+    }
+    
+    @objc func imageBackButtonPressed(){
+        
+        if let zoomOutImageView = zoomingImageView{
+            // Animate back to controller
+            zoomOutImageView.layer.cornerRadius = 16
+            zoomOutImageView.clipsToBounds = true
+            self.backButton?.isEnabled = false
+            self.backButton?.isHidden = true
+            
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+                zoomOutImageView.frame = self.startingFrame!
+                self.blackBackgroundView?.alpha = 0
+                self.inputContainerView.alpha = 1
+                self.startingImageView?.isHidden = false
+            }) { (completed) in
+                zoomOutImageView.removeFromSuperview()
+            }
+        }
     }
     
 }
