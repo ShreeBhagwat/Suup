@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import UserNotifications
+import ChameleonFramework
 
 class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var user: Users? {
@@ -109,27 +110,36 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         uploadImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         let sendbutton = UIButton(type: .system)
-        sendbutton.setTitle("Send", for: .normal)
+//        sendbutton.setTitle("Send", for: .normal)
+        sendbutton.setImage(#imageLiteral(resourceName: "sendf"), for: .normal)
         sendbutton.translatesAutoresizingMaskIntoConstraints = false
         sendbutton.addTarget(self, action: #selector(sendButtonPressed), for: .touchUpInside)
         containerView.addSubview(sendbutton)
         // Constraints x,y,width,height
         sendbutton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
         sendbutton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        sendbutton.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        sendbutton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         sendbutton.heightAnchor.constraint(equalTo: containerView.heightAnchor)
         
         //        let inputTextField = UITextField()
         //        inputTextField.placeholder = "Enter Message..."
         //        inputTextField.translatesAutoresizingMaskIntoConstraints = false
+        
+        
         containerView.addSubview(inputTextFiled)
         
         //Constraints x,y,width,height
+//        inputTextFiled.topAnchor.constraint(equalTo: containerView.topAnchor, constant: -8)
         inputTextFiled.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant:8).isActive = true
         inputTextFiled.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         //        inputTextField.widthAnchor.constraint(equalToConstant: 100).isActive = true
         inputTextFiled.rightAnchor.constraint(equalTo: sendbutton.leftAnchor).isActive = true
-        inputTextFiled.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
+        inputTextFiled.heightAnchor.constraint(equalTo: containerView.heightAnchor,constant: -15).isActive = true
+        inputTextFiled.layer.cornerRadius = 16
+        inputTextFiled.backgroundColor = UIColor.white
+        containerView.backgroundColor = UIColor(hexString: "#e0e0e0")
+        
+       
         
         let seperatorLineView = UIView()
         seperatorLineView.backgroundColor = UIColor.gray
@@ -146,6 +156,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
          return containerView
     }()
     
+    //Attachment Button
     @objc func attachmentButton(){
         let imagePickerController = UIImagePickerController()
         imagePickerController.allowsEditing = true
@@ -477,6 +488,9 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 let height = (self.startingFrame?.height)! / (self.startingFrame?.width)! * keyWindow.frame.width
                 
                 self.zoomingImageView?.frame = CGRect(x: 0, y: 0, width: keyWindow.frame.width, height: height)
+//                self.zoomingImageView?.backgroundColor = UIColor.black
+//                self.zoomingImageView?.frame = UIScreen.main.bounds
+//                self.zoomingImageView?.contentMode = .scaleAspectFit
                 
                 self.zoomingImageView?.center = keyWindow.center
             }, completion: nil)

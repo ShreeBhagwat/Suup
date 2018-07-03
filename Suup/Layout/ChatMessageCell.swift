@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import ChameleonFramework
 class ChatMessageCell: UICollectionViewCell {
     
     var chatLogController: ChatLogController?
@@ -23,7 +24,8 @@ class ChatMessageCell: UICollectionViewCell {
         return tv
     }()
     
-    static let blueColour = UIColor.init(red: (110.0/255.0), green: (242.0/255.0), blue: (244.0/255.0), alpha: 1)
+//    static let blueColour = UIColor.init(red: (110.0/255.0), green: (242.0/255.0), blue: (244.0/255.0), alpha: 1)
+        static let blueColour = UIColor(hexString: "78daf6")
     
     let bubbleView: UIView = {
        let view = UIView()
