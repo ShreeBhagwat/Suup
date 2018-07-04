@@ -427,11 +427,15 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     var blackBackgroundView: UIView?
     var backButton:UIButton?
     var startingImageView: UIImageView?
+    var shareButton: UIButton?
+    
     
     // Image Zooming Logic
     func performZoomInImages(startingImageView : UIImageView){
+
         self.startingImageView = startingImageView
         self.startingImageView?.isHidden = true
+        textFieldShouldEndEditing(inputTextFiled)
         startingFrame = startingImageView.superview?.convert(startingImageView.frame, to: nil)
         print(startingFrame)
         
@@ -446,17 +450,32 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             blackBackgroundView?.backgroundColor = UIColor.black
             blackBackgroundView?.alpha = 0
            
-            backButton = UIButton(type: .system)
+            backButton = UIButton(type: .custom)
             backButton?.setTitle("Back", for: .normal)
             backButton?.setTitleColor(UIColor.white, for: .normal)
-            backButton?.setImage(#imageLiteral(resourceName: "back"), for: .normal)
+            backButton?.setImage(#imageLiteral(resourceName: "back1"), for: .normal)
             backButton?.translatesAutoresizingMaskIntoConstraints = false
             backButton?.addTarget(self, action: #selector(imageBackButtonPressed), for: .touchUpInside)
+            
+            shareButton = UIButton(type: .custom)
+            shareButton?.setImage(#imageLiteral(resourceName: "share_ic"), for: .normal)
+            shareButton?.translatesAutoresizingMaskIntoConstraints = false
+            shareButton?.addTarget(self, action: #selector(shareButtonPressed), for: .touchUpInside)
+            
             
             
             keyWindow.addSubview(blackBackgroundView!)
             keyWindow.addSubview(zoomingImageView!)
             keyWindow.addSubview(backButton!)
+            keyWindow.addSubview(shareButton!)
+            
+            
+            //share Button Constraints
+            shareButton?.leftAnchor.constraint(equalTo: (blackBackgroundView?.leftAnchor)!).isActive = true
+            shareButton?.bottomAnchor.constraint(equalTo: (blackBackgroundView?.bottomAnchor)!, constant: -10).isActive = true
+            shareButton?.widthAnchor.constraint(equalToConstant: 80).isActive = true
+            shareButton?.heightAnchor.constraint(equalToConstant: 80).isActive = true
+            
             
             //Back Button Constraints
             backButton?.leftAnchor.constraint(equalTo: (blackBackgroundView?.leftAnchor)!, constant: 10).isActive = true
@@ -481,6 +500,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 self.inputContainerView.alpha = 0
                 self.backButton?.isHidden = false
                 self.backButton?.isEnabled = true
+                self.shareButton?.isHidden = false
+                self.shareButton?.isEnabled = true
                 //Maths
                 //h2 / w1 = h1/w1
                 //h2 = h1/w1*w1
@@ -502,10 +523,13 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         if let zoomOutImageView = zoomingImageView{
             // Animate back to controller
+            keyboardWillShow()
             zoomOutImageView.layer.cornerRadius = 16
             zoomOutImageView.clipsToBounds = true
             self.backButton?.isEnabled = false
             self.backButton?.isHidden = true
+            self.shareButton?.isEnabled = false
+            self.shareButton?.isHidden = true
             
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 zoomOutImageView.frame = self.startingFrame!
@@ -517,6 +541,18 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             }
         }
     }
-    
+    @objc func shareButtonPressed(){
+//        imageBackButtonPressed()
+        let image = UIImage()
+        let imageToShare = [image]
+        var activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities:  nil)
+        
+        activityViewController.popoverPresentationController?.sourceView?.addSubview(startingImageView!)
+        self.present(activityViewController, animated: true, completion: nil)
+    }
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
 }
 
