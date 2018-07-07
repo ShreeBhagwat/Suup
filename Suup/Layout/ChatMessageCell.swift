@@ -8,11 +8,21 @@
 
 import UIKit
 import ChameleonFramework
+import Firebase
 class ChatMessageCell: UICollectionViewCell {
     
     var chatLogController: ChatLogController?
-    
-    
+    var message: Message?{
+        didSet{
+    if let seconds = message?.timeStamp?.doubleValue {
+        let timeStampDate = NSDate(timeIntervalSince1970: seconds)
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "hh:mm: a"
+        messageTimeStamp.text = dateFormatter.string(from: timeStampDate as Date)
+        }
+    }
+}
     let textView: UITextView = {
         let tv = UITextView()
         tv.text = "Sample Text For Now"
@@ -57,6 +67,17 @@ class ChatMessageCell: UICollectionViewCell {
 
         return imageView
     }()
+        var messageTimeStamp: UILabel = {
+        let messageTime = UILabel()
+        messageTime.translatesAutoresizingMaskIntoConstraints = false
+        messageTime.textColor = UIColor.lightGray
+        messageTime.font = UIFont.italicSystemFont(ofSize: 12)
+            messageTime.text = "00:00"
+    
+        
+        
+        return messageTime
+    }()
     
     @objc func imageZoom(tapGesture:UITapGestureRecognizer){
         if let imageView = tapGesture.view as? UIImageView {
@@ -75,6 +96,7 @@ class ChatMessageCell: UICollectionViewCell {
         addSubview(textView)
         addSubview(profileImageView)
         bubbleView.addSubview(messageImageView)
+        addSubview(messageTimeStamp)
         
         //IOS 9 Constraints: x, y , width, height
         messageImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
@@ -91,7 +113,7 @@ class ChatMessageCell: UICollectionViewCell {
         
         
         //IOS 9 Constraints: x, y , width, height
-        bubbleViewRightAnchor = bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8)
+        bubbleViewRightAnchor = bubbleView.rightAnchor.constraint(equalTo: messageTimeStamp.leftAnchor, constant: -8)
         bubbleViewRightAnchor?.isActive = true
         
         bubbleViewLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8)
@@ -101,6 +123,12 @@ class ChatMessageCell: UICollectionViewCell {
         bubbleWidthAnchor = bubbleView.widthAnchor.constraint(equalToConstant: 200)
         bubbleWidthAnchor?.isActive = true
         bubbleView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
+        
+        //MessageTimeStamp Constraints
+            messageTimeStamp.leftAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
+            messageTimeStamp.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor).isActive = true
+        messageTimeStamp.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8).isActive = true
+//            messageTimeStamp.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         
         //IOS 9 Constraints: x, y , width, height
 //        textView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
