@@ -20,9 +20,10 @@
 #include <utility>
 
 #import "Firestore/Source/Core/FSTFirestoreClient.h"
-#import "Firestore/Source/Util/FSTAssert.h"
 
 #include "Firestore/core/src/firebase/firestore/model/resource_path.h"
+#include "Firestore/core/src/firebase/firestore/util/hard_assert.h"
+#include "Firestore/core/src/firebase/firestore/util/hashing.h"
 #include "Firestore/core/src/firebase/firestore/util/string_apple.h"
 
 namespace util = firebase::firestore::util;
@@ -52,8 +53,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** Designated initializer. */
 - (instancetype)initWithPath:(ResourcePath)path {
-  FSTAssert([FSTDocumentKey isDocumentKey:path], @"invalid document key path: %s",
-            path.CanonicalString().c_str());
+  HARD_ASSERT([FSTDocumentKey isDocumentKey:path], "invalid document key path: %s",
+              path.CanonicalString());
 
   if (self = [super init]) {
     _path = path;
@@ -72,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSUInteger)hash {
-  return _path.Hash();
+  return util::Hash(_path);
 }
 
 - (NSString *)description {

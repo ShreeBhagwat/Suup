@@ -16,12 +16,19 @@
 
 #import "Firestore/Source/Local/FSTMemoryQueryCache.h"
 
+#include <utility>
+
 #import "Firestore/Source/Core/FSTQuery.h"
-#import "Firestore/Source/Core/FSTSnapshotVersion.h"
+#import "Firestore/Source/Local/FSTMemoryPersistence.h"
 #import "Firestore/Source/Local/FSTQueryData.h"
 #import "Firestore/Source/Local/FSTReferenceSet.h"
 
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
+#include "Firestore/core/src/firebase/firestore/model/snapshot_version.h"
+
+using firebase::firestore::model::SnapshotVersion;
+using firebase::firestore::model::DocumentKeySet;
+using firebase::firestore::model::DocumentKey;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -38,18 +45,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, assign) FSTListenSequenceNumber highestListenSequenceNumber;
 
-/** The last received snapshot version. */
-@property(nonatomic, strong) FSTSnapshotVersion *lastRemoteSnapshotVersion;
-
 @end
 
-@implementation FSTMemoryQueryCache
+@implementation FSTMemoryQueryCache {
+  FSTMemoryPersistence *_persistence;
+  /** The last received snapshot version. */
+  SnapshotVersion _lastRemoteSnapshotVersion;
+}
 
-- (instancetype)init {
+- (instancetype)initWithPersistence:(FSTMemoryPersistence *)persistence {
   if (self = [super init]) {
+    _persistence = persistence;
     _queries = [NSMutableDictionary dictionary];
     _references = [[FSTReferenceSet alloc] init];
-    _lastRemoteSnapshotVersion = [FSTSnapshotVersion noVersion];
+    _lastRemoteSnapshotVersion = SnapshotVersion::None();
   }
   return self;
 }
@@ -69,14 +78,13 @@ NS_ASSUME_NONNULL_BEGIN
   return _highestListenSequenceNumber;
 }
 
-/*- (FSTSnapshotVersion *)lastRemoteSnapshotVersion {
+- (const SnapshotVersion &)lastRemoteSnapshotVersion {
   return _lastRemoteSnapshotVersion;
 }
 
-- (void)setLastRemoteSnapshotVersion:(FSTSnapshotVersion *)snapshotVersion
-                               group:(FSTWriteGroup *)group {
-  _lastRemoteSnapshotVersion = snapshotVersion;
-}*/
+- (void)setLastRemoteSnapshotVersion:(SnapshotVersion)snapshotVersion {
+  _lastRemoteSnapshotVersion = std::move(snapshotVersion);
+}
 
 - (void)addQueryData:(FSTQueryData *)queryData {
   self.queries[queryData.query] = queryData;
@@ -113,19 +121,25 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Reference tracking
 
-- (void)addMatchingKeys:(FSTDocumentKeySet *)keys forTargetID:(FSTTargetID)targetID {
+- (void)addMatchingKeys:(const DocumentKeySet &)keys forTargetID:(FSTTargetID)targetID {
   [self.references addReferencesToKeys:keys forID:targetID];
+  for (const DocumentKey &key : keys) {
+    [_persistence.referenceDelegate addReference:key target:targetID];
+  }
 }
 
-- (void)removeMatchingKeys:(FSTDocumentKeySet *)keys forTargetID:(FSTTargetID)targetID {
+- (void)removeMatchingKeys:(const DocumentKeySet &)keys forTargetID:(FSTTargetID)targetID {
   [self.references removeReferencesToKeys:keys forID:targetID];
+  for (const DocumentKey &key : keys) {
+    [_persistence.referenceDelegate removeReference:key target:targetID];
+  }
 }
 
 - (void)removeMatchingKeysForTargetID:(FSTTargetID)targetID {
   [self.references removeReferencesForID:targetID];
 }
 
-- (FSTDocumentKeySet *)matchingKeysForTargetID:(FSTTargetID)targetID {
+- (DocumentKeySet)matchingKeysForTargetID:(FSTTargetID)targetID {
   return [self.references referencedKeysForID:targetID];
 }
 

@@ -36,13 +36,13 @@
 #import "Firestore/Source/Model/FSTDocumentSet.h"
 #import "Firestore/Source/Model/FSTFieldValue.h"
 #import "Firestore/Source/Model/FSTMutation.h"
-#import "Firestore/Source/Util/FSTAssert.h"
 #import "Firestore/Source/Util/FSTAsyncQueryListener.h"
 #import "Firestore/Source/Util/FSTUsageValidation.h"
 
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
 #include "Firestore/core/src/firebase/firestore/model/precondition.h"
 #include "Firestore/core/src/firebase/firestore/model/resource_path.h"
+#include "Firestore/core/src/firebase/firestore/util/hard_assert.h"
 #include "Firestore/core/src/firebase/firestore/util/string_apple.h"
 
 namespace util = firebase::firestore::util;
@@ -125,6 +125,11 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)setData:(NSDictionary<NSString *, id> *)documentData
+    mergeFields:(NSArray<id> *)mergeFields {
+  return [self setData:documentData mergeFields:mergeFields completion:nil];
+}
+
+- (void)setData:(NSDictionary<NSString *, id> *)documentData
      completion:(nullable void (^)(NSError *_Nullable error))completion {
   return [self setData:documentData merge:NO completion:completion];
 }
@@ -132,8 +137,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setData:(NSDictionary<NSString *, id> *)documentData
           merge:(BOOL)merge
      completion:(nullable void (^)(NSError *_Nullable error))completion {
-  FSTParsedSetData *parsed = merge ? [self.firestore.dataConverter parsedMergeData:documentData]
-                                   : [self.firestore.dataConverter parsedSetData:documentData];
+  FSTParsedSetData *parsed =
+      merge ? [self.firestore.dataConverter parsedMergeData:documentData fieldMask:nil]
+            : [self.firestore.dataConverter parsedSetData:documentData];
+  return [self.firestore.client
+      writeMutations:[parsed mutationsWithKey:self.key precondition:Precondition::None()]
+          completion:completion];
+}
+
+- (void)setData:(NSDictionary<NSString *, id> *)documentData
+    mergeFields:(NSArray<id> *)mergeFields
+     completion:(nullable void (^)(NSError *_Nullable error))completion {
+  FSTParsedSetData *parsed =
+      [self.firestore.dataConverter parsedMergeData:documentData fieldMask:mergeFields];
   return [self.firestore.client
       writeMutations:[parsed mutationsWithKey:self.key precondition:Precondition::None()]
           completion:completion];
@@ -253,7 +269,7 @@ addSnapshotListenerInternalWithOptions:(FSTListenOptions *)internalOptions
       return;
     }
 
-    FSTAssert(snapshot.documents.count <= 1, @"Too many document returned on a document query");
+    HARD_ASSERT(snapshot.documents.count <= 1, "Too many document returned on a document query");
     FSTDocument *document = [snapshot.documents documentForKey:key];
 
     FIRDocumentSnapshot *result = [FIRDocumentSnapshot snapshotWithFirestore:firestore
@@ -264,8 +280,8 @@ addSnapshotListenerInternalWithOptions:(FSTListenOptions *)internalOptions
   };
 
   FSTAsyncQueryListener *asyncListener =
-      [[FSTAsyncQueryListener alloc] initWithDispatchQueue:self.firestore.client.userDispatchQueue
-                                           snapshotHandler:snapshotHandler];
+      [[FSTAsyncQueryListener alloc] initWithExecutor:self.firestore.client.userExecutor
+                                      snapshotHandler:snapshotHandler];
 
   FSTQueryListener *internalListener =
       [firestore.client listenToQuery:query

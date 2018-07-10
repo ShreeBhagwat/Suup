@@ -59,29 +59,60 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         textField.placeholder = "Enter Message..."
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.delegate = self
+        textField.backgroundColor = UIColor.white
+        textField.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5).cgColor
+        textField.layer.borderWidth = CGFloat(Float(1.0))
+        textField.layer.cornerRadius = 14
+        textField.layer.sublayerTransform = CATransform3DMakeTranslation(11, 0, 11)
         
         return textField
+    }()
+   
+    
+   lazy var inputTextView : UITextView = {
+        let textView = UITextView()
+    
+    
+        textView.backgroundColor = UIColor.yellow
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.font = UIFont.preferredFont(forTextStyle: .headline)
+        textView.isScrollEnabled = false
+        textView.delegate = self
+//        textViewDidChange(textView)
+    
+        
+        return textView
     }()
     
     let cellId = "cellId"
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "background")!)
         collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         //        collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         collectionView?.alwaysBounceVertical = true
-        collectionView?.backgroundColor = UIColor.white
+        collectionView?.backgroundColor = UIColor.clear
         collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.keyboardDismissMode = .interactive
+//        collectionView?.autoresizingMask = [.flexibleHeight]
         
         
         //
         setUpKeyboardObservers()
+ 
     }
+//    override func viewWillLayoutSubviews() {
+//        super.viewWillLayoutSubviews()
+//
+//        inputContainerView.frame.size.height = inputTextView.frame.height + 15
+//    }
+    
     lazy var inputContainerView:UIView = {
         let containerView = UIView()
-        containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
-        containerView.backgroundColor = UIColor(hexString: "#e0e0e0")
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height:50)
+        containerView.backgroundColor = UIColor(hexString: "#fbfbfb")
         
         let uploadImageView = UIImageView()
         uploadImageView.isUserInteractionEnabled = true
@@ -130,14 +161,20 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         containerView.addSubview(inputTextFiled)
         
         //Constraints x,y,width,height
+//
+//        inputTextFiled.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant:8).isActive = true
+//        inputTextFiled.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+//        inputTextFiled.rightAnchor.constraint(equalTo: sendbutton.leftAnchor).isActive = true
+//        inputTextFiled.heightAnchor.constraint(equalTo: containerView.heightAnchor,constant: -15).isActive = true
         
-        inputTextFiled.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant:8).isActive = true
-        inputTextFiled.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        inputTextFiled.rightAnchor.constraint(equalTo: sendbutton.leftAnchor).isActive = true
-        inputTextFiled.heightAnchor.constraint(equalTo: containerView.heightAnchor,constant: -15).isActive = true
         
-        inputTextFiled.layer.cornerRadius = 16
-        inputTextFiled.backgroundColor = UIColor.white
+        containerView.addSubview(inputTextView)
+    
+        inputTextView.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant:8).isActive = true
+        inputTextView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        inputTextView.rightAnchor.constraint(equalTo: sendbutton.leftAnchor).isActive = true
+//        inputTextView.heightAnchor.constraint(equalTo: containerView.heightAnchor,constant: -15).isActive = true
+        inputTextView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
         
         let seperatorLineView = UIView()
         seperatorLineView.backgroundColor = UIColor.gray
@@ -394,7 +431,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         // Bubblw View Modification
         if let text = message.text{
-            cell.bubbleWidthAnchor?.constant = estimatedFrameForText(text: text).width + 32
+            cell.bubbleWidthAnchor?.constant = estimatedFrameForText(text: text).width + 40
+            cell.bubbleImageView.frame.size.width = estimatedFrameForText(text: text).width + 40
             cell.textView.isHidden = false
             
         } else if message.imageUrl != nil {
@@ -412,14 +450,18 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         if message.fromId == Auth.auth().currentUser?.uid{
             //Out Going Blue
-            cell.bubbleView.backgroundColor = ChatMessageCell.blueColour
+            cell.bubbleView.backgroundColor = UIColor.clear
+            cell.bubbleImageView.image = ChatMessageCell.blueBubbleImage
+            cell.bubbleImageView.tintColor = ChatMessageCell.blueColour
             cell.profileImageView.isHidden = true
             cell.bubbleViewRightAnchor?.isActive = true
             cell.bubbleViewLeftAnchor?.isActive = false
             
         } else {
             //Incoming Grey Message
-            cell.bubbleView.backgroundColor = UIColor(red:240.0/255.0, green:240.0/255.0, blue:240.0/255.0, alpha:1.0)
+            cell.bubbleView.backgroundColor = UIColor.clear
+            cell.bubbleImageView.image = ChatMessageCell.grayBubbleImage
+            cell.bubbleImageView.tintColor = UIColor(red:240.0/255.0, green:240.0/255.0, blue:240.0/255.0, alpha:1.0)
             cell.profileImageView.isHidden = false
             cell.bubbleViewRightAnchor?.isActive = false
             cell.bubbleViewLeftAnchor?.isActive = true
@@ -429,6 +471,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             cell.messageImageView.loadImageFromCache(urlString: messageImageUrl)
             cell.messageImageView.isHidden = false
             cell.bubbleView.backgroundColor = UIColor.clear
+            cell.bubbleImageView.tintColor = UIColor.clear
         }else {
             cell.messageImageView.isHidden = true
             
@@ -464,6 +507,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let message = messages[indexPath.item]
         if let text = message.text{
             height = estimatedFrameForText(text: text).height+20
+            
         } else if let imageWidth = message.imageWidth?.floatValue, let imageHeight = message.imageHeight?.floatValue {
             // h1/w1 = h2/w2
             //solve for h1
@@ -471,8 +515,9 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             
             height = CGFloat(imageHeight / imageWidth * 200)
         }
-        
+      
         let width = UIScreen.main.bounds.width
+        
         return CGSize(width: width, height: height)
     }
     private func estimatedFrameForText(text:String) -> (CGRect){
@@ -486,7 +531,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     
     
     @objc func sendButtonPressed(){
-        let properties = ["text":inputTextFiled.text!] as [String : Any]
+        let properties = ["text":inputTextView.text!] as [String : Any]
         sendMessageWithProperties(properties: properties as [String : AnyObject])
     }
     
@@ -663,4 +708,83 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         return true
     }
 }
+extension ChatLogController : UITextViewDelegate {
+//
+    func textViewDidChange(_ textView: UITextView) {
+//        if textView.contentSize.height > textView.frame.size.height {
+//
+//            let fixedWidth = textView.frame.size.width
+//            textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+//
+//            var newFrame = textView.frame
+//            let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+//
+//
+//            newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
+//
+//            textView.frame = newFrame;
+//
+//
+//
+//        }
+//    }
 
+    
+    print("text view did change\n")
+    let textViewFixedWidth: CGFloat = textView.frame.size.width
+    let newSize = textView.sizeThatFits(CGSize(width: textViewFixedWidth, height: CGFloat.greatestFiniteMagnitude))
+    var newFrame: CGRect = textView.frame
+    //
+    var textViewYPosition = textView.frame.origin.y
+    var heightDifference = textView.frame.height - newSize.height
+    //
+    if (abs(heightDifference) > 5) {
+    newFrame.size = CGSize(width: max(newSize.width, textViewFixedWidth), height: newSize.height)
+    newFrame.offsetBy(dx: 0.0, dy: heightDifference)
+    //
+//    updateParentView(heightDifference: heightDifference)
+    }
+    textView.frame = newFrame
+}
+    func updateParentView(heightDifference: CGFloat) {
+//        //
+//        var newContainerViewFrame: CGRect = inputContainerView.frame
+//        //
+//        let containerViewHeight = inputContainerView.frame.size.height
+//        print("container view height: \(containerViewHeight)\n")
+//        //
+//        let newContainerViewHeight = containerViewHeight + heightDifference
+//        print("new container view height: \(newContainerViewHeight)\n")
+//        //
+//        let containerViewHeightDifference = containerViewHeight - newContainerViewHeight
+//        print("container view height difference: \(containerViewHeightDifference)\n")
+//        //
+////        newContainerViewFrame.size = CGSizeMake(inputContainerView.frame.size.width, newContainerViewHeight)
+//        newContainerViewFrame.size = CGSize(width: inputContainerView.frame.size.width, height: newContainerViewHeight)
+//        //
+////        newContainerViewFrame.origin.y - containerViewHeightDifference
+//        //
+//        inputContainerView.frame = newContainerViewFrame
+        
+        
+            //
+            var newContainerViewFrame: CGRect = inputContainerView.frame
+            //
+            var containerViewHeight = inputContainerView.frame.size.height
+            print("container view height: \(containerViewHeight)\n")
+            //
+            var newContainerViewHeight = containerViewHeight + heightDifference
+            print("new container view height: \(newContainerViewHeight)\n")
+            //
+            var containerViewHeightDifference = containerViewHeight - newContainerViewHeight
+            print("container view height difference: \(containerViewHeightDifference)\n")
+            //
+        newContainerViewFrame.size = CGSize(width: inputContainerView.frame.size.width, height: newContainerViewHeight)
+//         newContainerViewFrame.origin.y - containerViewHeightDifference
+            //
+            newContainerViewFrame.offsetBy(dx: 0.0, dy: containerViewHeightDifference)
+            //
+             inputContainerView.frame = newContainerViewFrame
+       
+    }
+}

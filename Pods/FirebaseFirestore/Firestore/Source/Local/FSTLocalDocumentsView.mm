@@ -17,20 +17,22 @@
 #import "Firestore/Source/Local/FSTLocalDocumentsView.h"
 
 #import "Firestore/Source/Core/FSTQuery.h"
-#import "Firestore/Source/Core/FSTSnapshotVersion.h"
 #import "Firestore/Source/Local/FSTMutationQueue.h"
 #import "Firestore/Source/Local/FSTRemoteDocumentCache.h"
 #import "Firestore/Source/Model/FSTDocument.h"
 #import "Firestore/Source/Model/FSTDocumentDictionary.h"
 #import "Firestore/Source/Model/FSTMutation.h"
 #import "Firestore/Source/Model/FSTMutationBatch.h"
-#import "Firestore/Source/Util/FSTAssert.h"
 
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
 #include "Firestore/core/src/firebase/firestore/model/resource_path.h"
+#include "Firestore/core/src/firebase/firestore/model/snapshot_version.h"
+#include "Firestore/core/src/firebase/firestore/util/hard_assert.h"
 
 using firebase::firestore::model::DocumentKey;
 using firebase::firestore::model::ResourcePath;
+using firebase::firestore::model::SnapshotVersion;
+using firebase::firestore::model::DocumentKeySet;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -64,14 +66,14 @@ NS_ASSUME_NONNULL_BEGIN
   return [self localDocument:remoteDoc key:key];
 }
 
-- (FSTMaybeDocumentDictionary *)documentsForKeys:(FSTDocumentKeySet *)keys {
+- (FSTMaybeDocumentDictionary *)documentsForKeys:(const DocumentKeySet &)keys {
   FSTMaybeDocumentDictionary *results = [FSTMaybeDocumentDictionary maybeDocumentDictionary];
-  for (FSTDocumentKey *key in keys.objectEnumerator) {
+  for (const DocumentKey &key : keys) {
     // TODO(mikelehen): PERF: Consider fetching all remote documents at once rather than one-by-one.
     FSTMaybeDocument *maybeDoc = [self documentForKey:key];
     // TODO(http://b/32275378): Don't conflate missing / deleted.
     if (!maybeDoc) {
-      maybeDoc = [FSTDeletedDocument documentWithKey:key version:[FSTSnapshotVersion noVersion]];
+      maybeDoc = [FSTDeletedDocument documentWithKey:key version:SnapshotVersion::None()];
     }
     results = [results dictionaryBySettingObject:maybeDoc forKey:key];
   }
@@ -105,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
 
   // Now use the mutation queue to discover any other documents that may match the query after
   // applying mutations.
-  FSTDocumentKeySet *matchingKeys = [FSTDocumentKeySet keySet];
+  DocumentKeySet matchingKeys;
   NSArray<FSTMutationBatch *> *matchingMutationBatches =
       [self.mutationQueue allMutationBatchesAffectingQuery:query];
   for (FSTMutationBatch *batch in matchingMutationBatches) {
@@ -114,13 +116,13 @@ NS_ASSUME_NONNULL_BEGIN
 
       // If the key is already in the results, we can skip it.
       if (![results containsKey:mutation.key]) {
-        matchingKeys = [matchingKeys setByAddingObject:mutation.key];
+        matchingKeys = matchingKeys.insert(mutation.key);
       }
     }
   }
 
   // Now add in results for the matchingKeys.
-  for (FSTDocumentKey *key in matchingKeys.objectEnumerator) {
+  for (const DocumentKey &key : matchingKeys) {
     FSTMaybeDocument *doc = [self documentForKey:key];
     if ([doc isKindOfClass:[FSTDocument class]]) {
       results = [results dictionaryBySettingObject:(FSTDocument *)doc forKey:key];
@@ -176,7 +178,7 @@ NS_ASSUME_NONNULL_BEGIN
     } else if ([mutatedDoc isKindOfClass:[FSTDocument class]]) {
       result = [result dictionaryBySettingObject:(FSTDocument *)mutatedDoc forKey:key];
     } else {
-      FSTFail(@"Unknown document: %@", mutatedDoc);
+      HARD_FAIL("Unknown document: %s", mutatedDoc);
     }
   }];
   return result;

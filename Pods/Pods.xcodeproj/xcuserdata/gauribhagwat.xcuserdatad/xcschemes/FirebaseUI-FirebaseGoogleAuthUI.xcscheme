@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "0940"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AE6075C1DA4A3E4A7FB0A9CCA126DA93"
+               BlueprintIdentifier = "22DA34D5D283048FA3625CD58950A379"
                BuildableName = "FirebaseGoogleAuthUI.bundle"
                BlueprintName = "FirebaseUI-FirebaseGoogleAuthUI"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "AE6075C1DA4A3E4A7FB0A9CCA126DA93"
+            BlueprintIdentifier = "22DA34D5D283048FA3625CD58950A379"
             BuildableName = "FirebaseGoogleAuthUI.bundle"
             BlueprintName = "FirebaseUI-FirebaseGoogleAuthUI"
             ReferencedContainer = "container:Pods.xcodeproj">

@@ -14,38 +14,41 @@ FirebaseUI supports iOS 8.0+. We recommend using [CocoaPods](https://cocoapods.o
 the following to your `Podfile`:
 
 ```ruby
-pod 'FirebaseUI', '~> 4.0'       # Pull in all Firebase UI features
+pod 'FirebaseUI', '~> 5.0'       # Pull in all Firebase UI features
 ```
 
 If you don't want to use all of FirebaseUI, there are multiple subspecs which can selectively install subsets of the full feature set:
 
 ```ruby
+# Only pull in FirebaseUI Firestore features
+pod 'FirebaseUI/Firestore', '~> 5.0'
+
 # Only pull in FirebaseUI Database features
-pod 'FirebaseUI/Database', '~> 4.0'
+pod 'FirebaseUI/Database', '~> 5.0'
 
 # Only pull in FirebaseUI Storage features
-pod 'FirebaseUI/Storage', '~> 4.0'
+pod 'FirebaseUI/Storage', '~> 5.0'
 
 # Only pull in FirebaseUI Auth features
-pod 'FirebaseUI/Auth', '~> 4.0'
+pod 'FirebaseUI/Auth', '~> 5.0'
 
 # Only pull in Facebook login features
-pod 'FirebaseUI/Facebook', '~> 4.0'
+pod 'FirebaseUI/Facebook', '~> 5.0'
 
 # Only pull in Google login features
-pod 'FirebaseUI/Google', '~> 4.0'
+pod 'FirebaseUI/Google', '~> 5.0'
 
 # Only pull in Twitter login features
-pod 'FirebaseUI/Twitter', '~> 4.0'
+pod 'FirebaseUI/Twitter', '~> 5.0'
 
 # Only pull in Phone Auth login features
-pod 'FirebaseUI/Phone', '~> 4.0'
+pod 'FirebaseUI/Phone', '~> 5.0'
 ```
 
 If you're including FirebaseUI in a Swift project, make sure you also have:
 
 ```ruby
-platform :ios, '8.0'
+platform :ios, '9.0'
 use_frameworks!
 ```
 
@@ -60,6 +63,7 @@ The READMEs for components of FirebaseUI can be found in their respective
 project folders.
 
 - [Auth](FirebaseAuthUI/README.md)
+- [Firestore](FirebaseFirestoreUI/README.md)
 - [PhoneAuth](FirebasePhoneAuthUI/README.md)
 - [Database](FirebaseDatabaseUI/README.md)
 - [Firestore](FirebaseFirestoreUI/README.md)
@@ -78,12 +82,12 @@ $ pod install
 
 Alternatively you can use `pod try FirebaseUI` to install the Objective-C or Swift sample projects.
 
-## Mandatory Sample Project Configuration
+## Sample Project Configuration
 
-You have to configure your Xcode project in order to run samples.
+You'll have to configure your Xcode project in order to run the samples.
 
-1. Your Xcode project should contain `GoogleService-Info.plist`, downloaded from [Firebase console](https://console.firebase.google.com) when you add your app to a Firebase project.<br>
-Copy `GoogleService-Info.plist` into sample the project folder (`samples/obj-c/GoogleService-Info.plist` or `samples/swift/GoogleService-Info.plist`).
+1. Your Xcode project should contain a `GoogleService-Info.plist`, downloaded from [Firebase console](https://console.firebase.google.com) when you add your app to a Firebase project.<br>
+Copy the `GoogleService-Info.plist` into the sample project folder (`samples/obj-c/GoogleService-Info.plist` or `samples/swift/GoogleService-Info.plist`).
 
 1. Update URL Types.<br>
 Go to `Project Settings -> Info tab -> Url Types` and update values for:
@@ -91,9 +95,9 @@ Go to `Project Settings -> Info tab -> Url Types` and update values for:
 	+ `fb{your-app-id}` (put Facebook App Id)
 	+ `twitterkit-{consumer-key}` (put Twitter App Consumer key)
 
-1. Update `Info.plist` twitter and facebook configuration values
+1. Update `Info.plist` with Twitter and Tacebook configuration values
 	+ `FacebookAppID -> {your-app-id}` (put Facebook App Id)
-	+ `Fabric -> Kits -> KitInfo -> consumerKey / consumerSecret` (put Twitter App consumer key/secret). Please note that's it's not secure to store `consumerSecret` in the app itself.
+	+ `Fabric -> Kits -> KitInfo -> consumerKey / consumerSecret` (put Twitter App consumer key/secret). Please note that's it's not secure to store the `consumerSecret` in the app itself.
 
 1. Enable Keychain Sharing.<br>
 Facebook SDK requires keychain sharing.<br>

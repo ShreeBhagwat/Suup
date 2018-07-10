@@ -18,11 +18,11 @@
 
 #import "Firestore/Source/Core/FSTTypes.h"
 #import "Firestore/Source/Model/FSTDocumentDictionary.h"
-#import "Firestore/Source/Model/FSTDocumentKeySet.h"
-#import "Firestore/Source/Model/FSTDocumentVersionDictionary.h"
 
 #include "Firestore/core/src/firebase/firestore/auth/user.h"
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
+#include "Firestore/core/src/firebase/firestore/model/document_key_set.h"
+#include "Firestore/core/src/firebase/firestore/model/snapshot_version.h"
 
 @class FSTLocalViewChanges;
 @class FSTLocalWriteResult;
@@ -141,7 +141,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Returns the last consistent snapshot processed (used by the RemoteStore to determine whether to
  * buffer incoming snapshots from the backend).
  */
-- (FSTSnapshotVersion *)lastRemoteSnapshotVersion;
+- (const firebase::firestore::model::SnapshotVersion &)lastRemoteSnapshotVersion;
 
 /**
  * Updates the "ground-state" (remote) documents. We assume that the remote event reflects any
@@ -156,7 +156,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Returns the keys of the documents that are associated with the given targetID in the remote
  * table.
  */
-- (FSTDocumentKeySet *)remoteDocumentKeysForTarget:(FSTTargetID)targetID;
+- (firebase::firestore::model::DocumentKeySet)remoteDocumentKeysForTarget:(FSTTargetID)targetID;
 
 /**
  * Collects garbage if necessary.

@@ -178,8 +178,10 @@ NS_ASSUME_NONNULL_BEGIN
       }
       return;
     }
-    [self.delegate.auth.currentUser reauthenticateWithCredential:credential
-                                                  completion:^(NSError *_Nullable reauthError) {
+    [self.delegate.auth.currentUser
+        reauthenticateAndRetrieveDataWithCredential:credential
+                                         completion:^(FIRAuthDataResult *_Nullable authResult,
+                                                      NSError *_Nullable reauthError) {
       [self.delegate decrementActivity];
       if (result) {
         result(self.delegate.auth.currentUser, reauthError);

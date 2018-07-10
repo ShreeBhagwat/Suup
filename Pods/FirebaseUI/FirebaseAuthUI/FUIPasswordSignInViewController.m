@@ -95,6 +95,25 @@ static NSString *const kCellReuseIdentifier = @"cellReuseIdentifier";
   [self enableDynamicCellHeightForTableView:_tableView];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+
+  if (self.navigationController.viewControllers.firstObject == self) {
+    if (!self.authUI.shouldHideCancelButton) {
+      UIBarButtonItem *cancelBarButton =
+          [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                                    target:self
+                                                    action:@selector(cancelAuthorization)];
+      self.navigationItem.leftBarButtonItem = cancelBarButton;
+    }
+    self.navigationItem.backBarButtonItem =
+        [[UIBarButtonItem alloc] initWithTitle:FUILocalizedString(kStr_Back)
+                                     style:UIBarButtonItemStylePlain
+                                    target:nil
+                                    action:nil];
+  }
+}
+
 #pragma mark - Actions
 
 - (void)signInWithDefaultValue:(NSString *)email andPassword:(NSString *)password {
@@ -133,7 +152,7 @@ static NSString *const kCellReuseIdentifier = @"cellReuseIdentifier";
       }
     }
     
-    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+    [self dismissNavigationControllerAnimated:YES completion:^{
       [self.authUI invokeResultCallbackWithAuthDataResult:authResult error:error];
     }];
   }];

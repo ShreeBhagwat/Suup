@@ -45,6 +45,15 @@ class ChatMessageCell: UICollectionViewCell {
         view.layer.masksToBounds = true
         return view
     }()
+    static let grayBubbleImage = UIImage(named: "bubble_gray")!.resizableImage(withCapInsets: UIEdgeInsetsMake(22, 26, 22, 26)).withRenderingMode(.alwaysTemplate)
+    static let blueBubbleImage = UIImage(named: "bubble_blue")!.resizableImage(withCapInsets: UIEdgeInsetsMake(30 ,36, 30, 36)).withRenderingMode(.alwaysTemplate)
+    let bubbleImageView : UIImageView = {
+      let imageView = UIImageView()
+        imageView.image = ChatMessageCell.grayBubbleImage
+        imageView.tintColor = UIColor(white: 0.96, alpha: 1)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
     
     let profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -97,6 +106,7 @@ class ChatMessageCell: UICollectionViewCell {
         addSubview(profileImageView)
         bubbleView.addSubview(messageImageView)
         addSubview(messageTimeStamp)
+        bubbleView.addSubview(bubbleImageView)
         
         //IOS 9 Constraints: x, y , width, height
         messageImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
@@ -110,24 +120,31 @@ class ChatMessageCell: UICollectionViewCell {
         profileImageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
         
+    
         
         
         //IOS 9 Constraints: x, y , width, height
-        bubbleViewRightAnchor = bubbleView.rightAnchor.constraint(equalTo: messageTimeStamp.leftAnchor, constant: -8)
+        bubbleViewRightAnchor = bubbleView.rightAnchor.constraint(equalTo: messageTimeStamp.leftAnchor, constant: -10)
         bubbleViewRightAnchor?.isActive = true
-        
         bubbleViewLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8)
-        
-        
         bubbleView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         bubbleWidthAnchor = bubbleView.widthAnchor.constraint(equalToConstant: 200)
         bubbleWidthAnchor?.isActive = true
         bubbleView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         
+        //BubbleImageView
+        //Constraints:
+       
+        bubbleImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
+        bubbleImageView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
+        bubbleImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
+        bubbleImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor).isActive = true
+//        bubbleImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor,constant:5).isActive = true
+        
         //MessageTimeStamp Constraints
             messageTimeStamp.leftAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
             messageTimeStamp.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor).isActive = true
-        messageTimeStamp.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8).isActive = true
+            messageTimeStamp.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8).isActive = true
 //            messageTimeStamp.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         
         //IOS 9 Constraints: x, y , width, height
