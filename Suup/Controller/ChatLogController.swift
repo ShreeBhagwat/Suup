@@ -109,7 +109,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let lengthToReplace = range.length
         let newLength = startinglength + lengthToAdd - lengthToReplace
         if newLength == 0 {
-            print("textFiled Empty")
+           
             self.recordAudioButton.setImage(#imageLiteral(resourceName: "ic_voice"), for: .normal)
            self.recordAudioButton.addTarget(self, action: #selector(self.recordAudioButtonPressed), for: .touchUpInside)
            self.recordAudioButton.isEnabled = true
@@ -117,7 +117,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             self.sendbutton.isEnabled = false
             self.sendbutton.isHidden = true
         } else {
-            print("textfiled")
+            
             UIView.transition(with: sendbutton, duration: 0.5, options: .transitionFlipFromRight, animations: {
                 self.sendbutton.setImage(#imageLiteral(resourceName: "sendf"), for: .normal)
                 self.sendbutton.addTarget(self, action: #selector(self.sendButtonPressed), for: .touchUpInside)
