@@ -43,6 +43,7 @@ class ChatMessageCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
+       
         return view
     }()
     static let grayBubbleImage = UIImage(named: "bubble_gray")!.resizableImage(withCapInsets: UIEdgeInsetsMake(22, 26, 22, 26)).withRenderingMode(.alwaysTemplate)
@@ -50,6 +51,7 @@ class ChatMessageCell: UICollectionViewCell {
     let bubbleImageView : UIImageView = {
       let imageView = UIImageView()
         imageView.image = ChatMessageCell.grayBubbleImage
+        
         imageView.tintColor = UIColor(white: 0.96, alpha: 1)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -79,12 +81,12 @@ class ChatMessageCell: UICollectionViewCell {
         var messageTimeStamp: UILabel = {
         let messageTime = UILabel()
         messageTime.translatesAutoresizingMaskIntoConstraints = false
-        messageTime.textColor = UIColor.lightGray
+//        messageTime.textColor = UIColor.lightGray
+        messageTime.backgroundColor = UIColor.clear
         messageTime.font = UIFont.italicSystemFont(ofSize: 12)
+        messageTime.layer.zPosition = 1
             messageTime.text = "00:00"
     
-        
-        
         return messageTime
     }()
     
@@ -93,10 +95,14 @@ class ChatMessageCell: UICollectionViewCell {
             self.chatLogController?.performZoomInImages(startingImageView: imageView)
         }
     }
-    
+
     var bubbleWidthAnchor: NSLayoutConstraint?
     var bubbleViewRightAnchor: NSLayoutConstraint?
     var bubbleViewLeftAnchor: NSLayoutConstraint?
+    
+    var bubbleImageWidthAnchor: NSLayoutConstraint?
+    var bubbleImageViewRightAnchor: NSLayoutConstraint?
+    var bubbleImageViewLeftAnchor: NSLayoutConstraint?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -107,6 +113,7 @@ class ChatMessageCell: UICollectionViewCell {
         bubbleView.addSubview(messageImageView)
         addSubview(messageTimeStamp)
         bubbleView.addSubview(bubbleImageView)
+        
         
         //IOS 9 Constraints: x, y , width, height
         messageImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
@@ -124,7 +131,8 @@ class ChatMessageCell: UICollectionViewCell {
         
         
         //IOS 9 Constraints: x, y , width, height
-        bubbleViewRightAnchor = bubbleView.rightAnchor.constraint(equalTo: messageTimeStamp.leftAnchor, constant: -10)
+//        bubbleViewRightAnchor = bubbleView.rightAnchor.constraint(equalTo: messageTimeStamp.leftAnchor, constant: -10)
+        bubbleViewRightAnchor = bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor)
         bubbleViewRightAnchor?.isActive = true
         bubbleViewLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8)
         bubbleView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
@@ -134,26 +142,39 @@ class ChatMessageCell: UICollectionViewCell {
         
         //BubbleImageView
         //Constraints:
+//
+//        bubbleImageViewRightAnchor = bubbleImageView.rightAnchor.constraint(equalTo: messageTimeStamp.leftAnchor, constant: -10)
+//        bubbleImageViewRightAnchor?.isActive = true
+//        bubbleViewLeftAnchor = bubbleImageView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8)
+//        bubbleImageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+//        bubbleImageWidthAnchor = bubbleImageView.widthAnchor.constraint(equalToConstant: 200)
+//        bubbleImageWidthAnchor?.isActive = true
+//        bubbleImageView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
        
         bubbleImageView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
-        bubbleImageView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
+//        bubbleImageView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
         bubbleImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
         bubbleImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor).isActive = true
-//        bubbleImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor,constant:5).isActive = true
+        bubbleImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
+    
         
-        //MessageTimeStamp Constraints
-            messageTimeStamp.leftAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
-            messageTimeStamp.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor).isActive = true
-            messageTimeStamp.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8).isActive = true
-//            messageTimeStamp.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
+        
+    
         
         //IOS 9 Constraints: x, y , width, height
 //        textView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        textView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor, constant: 8).isActive = true
+        textView.leftAnchor.constraint(equalTo: bubbleImageView.leftAnchor, constant: 10).isActive = true
         textView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        textView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
+        textView.rightAnchor.constraint(equalTo: bubbleImageView.rightAnchor , constant: -10).isActive = true
 //        textView.widthAnchor.constraint(equalToConstant: 200).isActive = true
         textView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
+        
+        //MessageTimeStamp Constraints
+//        messageTimeStamp.leftAnchor.constraint(equalTo: bubbleImageView.leftAnchor, constant: 20).isActive = true
+        messageTimeStamp.bottomAnchor.constraint(equalTo: textView.bottomAnchor,constant: -10).isActive = true
+        messageTimeStamp.rightAnchor.constraint(equalTo: bubbleImageView.rightAnchor,constant: -15).isActive = true
+        messageTimeStamp.topAnchor.constraint(equalTo: textView.bottomAnchor)
+        //            messageTimeStamp.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {

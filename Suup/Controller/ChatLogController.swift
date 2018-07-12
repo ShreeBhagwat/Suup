@@ -56,6 +56,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     
     lazy var inputTextFiled : UITextField = {
         let textField = UITextField()
+        
+        
         textField.placeholder = "Enter Message..."
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.delegate = self
@@ -71,16 +73,14 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     
    lazy var inputTextView : UITextView = {
         let textView = UITextView()
-    
-    
         textView.backgroundColor = UIColor.yellow
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.font = UIFont.preferredFont(forTextStyle: .headline)
-        textView.isScrollEnabled = false
+//        textView.isScrollEnabled = false
         textView.delegate = self
 //        textViewDidChange(textView)
-    
-        
+
+
         return textView
     }()
     
@@ -102,11 +102,36 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         setUpKeyboardObservers()
  
     }
-//    override func viewWillLayoutSubviews() {
-//        super.viewWillLayoutSubviews()
-//
-//        inputContainerView.frame.size.height = inputTextView.frame.height + 15
-//    }
+
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let startinglength = textField.text?.count ?? 0
+        let lengthToAdd = string.count
+        let lengthToReplace = range.length
+        let newLength = startinglength + lengthToAdd - lengthToReplace
+        if newLength == 0 {
+            print("textFiled Empty")
+            self.recordAudioButton.setImage(#imageLiteral(resourceName: "ic_voice"), for: .normal)
+           self.recordAudioButton.addTarget(self, action: #selector(self.recordAudioButtonPressed), for: .touchUpInside)
+           self.recordAudioButton.isEnabled = true
+            self.recordAudioButton.isHidden = false
+            self.sendbutton.isEnabled = false
+            self.sendbutton.isHidden = true
+        } else {
+            print("textfiled")
+            UIView.transition(with: sendbutton, duration: 0.5, options: .transitionFlipFromRight, animations: {
+                self.sendbutton.setImage(#imageLiteral(resourceName: "sendf"), for: .normal)
+                self.sendbutton.addTarget(self, action: #selector(self.sendButtonPressed), for: .touchUpInside)
+                self.recordAudioButton.isEnabled = false
+                self.recordAudioButton.isHidden = true
+                self.sendbutton.isEnabled = true
+                self.sendbutton.isHidden = false
+            }, completion: nil)
+        }
+        return true
+    }
+
+    let sendbutton = UIButton(type: .custom)
+    let recordAudioButton = UIButton(type: .custom)
     
     lazy var inputContainerView:UIView = {
         let containerView = UIView()
@@ -126,55 +151,53 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         uploadImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
         uploadImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
-        let recordAudioButton = UIButton(type: .custom)
-        let sendbutton = UIButton(type: .system)
-        
         containerView.addSubview(inputTextFiled)
-        containerView.addSubview(sendbutton)
-        containerView.addSubview(recordAudioButton)
-//        if inputTextFiled.text == nil {
-            sendbutton.setImage(#imageLiteral(resourceName: "sendf"), for: .normal)
-            sendbutton.translatesAutoresizingMaskIntoConstraints = false
-            sendbutton.addTarget(self, action: #selector(sendButtonPressed), for: .touchUpInside)
-            //        containerView.addSubview(sendbutton)
-            
+      
+        if inputTextFiled.text?.isEmpty ?? true {
+            print("TextFiled is Empty")
+            UIView.transition(with: recordAudioButton, duration: 0.5, options: .transitionFlipFromRight, animations: {
+                self.recordAudioButton.setImage(#imageLiteral(resourceName: "ic_voice"), for: .normal)
+                }, completion: nil)
+        } else {
+            print("textfiled is not empty")
+            UIView.animate(withDuration: 0.1, animations: {
+                self.sendbutton.setImage(#imageLiteral(resourceName: "sendf"), for: .normal)
+            }, completion: nil)
+        }
+        sendbutton.translatesAutoresizingMaskIntoConstraints = false
+                    containerView.addSubview(sendbutton)
+        
             // Constraints x,y,width,height
             sendbutton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
             sendbutton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
             sendbutton.widthAnchor.constraint(equalToConstant: 50).isActive = true
             sendbutton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
-//        } else {
-//            inputTextFiled.isEnabled = true
-//            sendbutton.isHidden = true
-//            sendbutton.isEnabled = false
-//            recordAudioButton.setImage(#imageLiteral(resourceName: "ic_voice"), for: .normal)
-//            recordAudioButton.translatesAutoresizingMaskIntoConstraints = false
-//            recordAudioButton.addTarget(self, action: #selector(recordAudioButtonPressed), for: .touchUpInside)
-//            //            inputTextFiled.addSubview(recordAudioButton)
-//            //Constraints x,y,width,height
-//            recordAudioButton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-//            recordAudioButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-//            recordAudioButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
-//            recordAudioButton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
-//
-//        }
+        
+        recordAudioButton.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(recordAudioButton)
+        // Constraints x,y,width,height
+        recordAudioButton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+        recordAudioButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        recordAudioButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        recordAudioButton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
+        
         containerView.addSubview(inputTextFiled)
         
         //Constraints x,y,width,height
+
+        inputTextFiled.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant:8).isActive = true
+        inputTextFiled.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        inputTextFiled.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -50).isActive = true
+        inputTextFiled.heightAnchor.constraint(equalTo: containerView.heightAnchor,constant: -15).isActive = true
+        
+        
+//        containerView.addSubview(inputTextView)
 //
-//        inputTextFiled.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant:8).isActive = true
-//        inputTextFiled.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-//        inputTextFiled.rightAnchor.constraint(equalTo: sendbutton.leftAnchor).isActive = true
-//        inputTextFiled.heightAnchor.constraint(equalTo: containerView.heightAnchor,constant: -15).isActive = true
-        
-        
-        containerView.addSubview(inputTextView)
-    
-        inputTextView.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant:8).isActive = true
-        inputTextView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        inputTextView.rightAnchor.constraint(equalTo: sendbutton.leftAnchor).isActive = true
-//        inputTextView.heightAnchor.constraint(equalTo: containerView.heightAnchor,constant: -15).isActive = true
-        inputTextView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
+//        inputTextView.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant:8).isActive = true
+//        inputTextView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+//        inputTextView.rightAnchor.constraint(equalTo: sendbutton.leftAnchor).isActive = true
+//        //        inputTextView.heightAnchor.constraint(equalTo: containerView.heightAnchor,constant: -15).isActive = true
+//        inputTextView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
         
         let seperatorLineView = UIView()
         seperatorLineView.backgroundColor = UIColor.gray
@@ -186,8 +209,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         seperatorLineView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         seperatorLineView.widthAnchor.constraint(equalTo: containerView.widthAnchor).isActive = true
         seperatorLineView.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
-        
-        
+
         return containerView
     }()
     
@@ -288,7 +310,6 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                     print("Failed To Upload Video",err)
                 }
                 if let videoStorageUrl = url?.absoluteString {
-                    
                 }
             })
         }
@@ -333,11 +354,48 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                     if let err = err {
                         print("Unable to upload image into storage due to \(err)")
                     }
-                    
+                    let Url = url
                     let messageImageURL = url?.absoluteString
                     self.sendMessageWithImage(imageUrl: messageImageURL!, image: image)
+//                    self.downlaodImage(url: Url!,image: image)
+
                 })
             })
+        }
+    }
+    
+//    func downloadImage(url: URL, completion: ((UIImage) -> ())? = nil) {
+//
+//        URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
+//
+//            guard let httpURLResponse = response as? HTTPURLResponse,
+//                error == nil, httpURLResponse.statusCode == 200 else {
+//                    print(error?.localizedDescription ?? "Error status code \((response as? HTTPURLResponse)?.statusCode)")
+//                    return
+//            }
+//
+//            guard let data = data, let image = UIImage(data: data) else {
+//                print("No image data found")
+//                return
+//            }
+//
+//            completion?(image)
+//            print("Image Downloded ")
+//        }).resume()
+//    }
+//
+    func downlaodImage(url: URL, image: UIImage){
+        let downloadref = Storage.storage().reference(withPath: "message_images")
+        let localRef = URL(string: "file/private/var/mobile/Containers/Data/")!
+        
+        let downlaodTask = downloadref.write(toFile: localRef) { (url, error) in
+            if error != nil {
+                print("error",error)
+            }
+            else {
+                let messageimageUrl = url?.absoluteString
+                self.sendMessageWithImage(imageUrl: messageimageUrl!, image: image)
+            }
         }
     }
     
@@ -353,16 +411,13 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     
     func setUpKeyboardObservers(){
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
-        //       NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear(notification:)), name: .UIKeyboardWillShow, object: nil)
-        //
-        //         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillDisappear(notification:)), name: .UIKeyboardWillHide, object: nil)
     }
+    
     @objc func keyboardWillShow(){
         if  messages.count > 0 {
             let indexPath = NSIndexPath(item: messages.count - 1, section: 0)
             collectionView?.scrollToItem(at: indexPath as IndexPath, at: .top, animated: true)
         }
-        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -381,7 +436,6 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         } else {
             keyboardHeight = keyboardFrame.cgRectValue.height
         }
-        
         containerViewBottomAnchor?.constant = -keyboardHeight
         let keyboardSize = keyboardHeight
         let contentInsets: UIEdgeInsets
@@ -391,16 +445,11 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
         else {
             contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize, 0.0);
-            
         }
         let keyboardDuration = notification?.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as! Double
         UIView.animate(withDuration: keyboardDuration) {
             self.view.layoutIfNeeded()
         }
-        //                let indexPath = NSIndexPath(row: (messageArray.count-1), section: 0)
-        //                messageTableView.contentInset = contentInsets
-        //                messageTableView.scrollToRow(at: indexPath as IndexPath, at: .top, animated: true)
-        //                messageTableView.scrollIndicatorInsets = messageTableView.contentInset
     }
     
     @objc func keyboardWillDisappear(notification: NSNotification?) {
@@ -421,26 +470,24 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         cell.chatLogController = self
         let message = messages[indexPath.item]
         cell.textView.text = message.text
+        
         let seconds = message.timeStamp?.doubleValue
         let timeStamp = NSDate(timeIntervalSince1970: seconds!)
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "hh:mm:a"
-        cell.messageTimeStamp.text = dateFormatter.string(from: timeStamp as Date)
+        cell.messageTimeStamp.text = dateFormatter.string(from: timeStamp as Date)       
      
         setupCell(cell: cell, message: message)
         
         // Bubblw View Modification
         if let text = message.text{
-            cell.bubbleWidthAnchor?.constant = estimatedFrameForText(text: text).width + 40
-            cell.bubbleImageView.frame.size.width = estimatedFrameForText(text: text).width + 40
+            cell.bubbleWidthAnchor?.constant = estimatedFrameForText(text: text).width + 40 + cell.messageTimeStamp.frame.width
             cell.textView.isHidden = false
-            
         } else if message.imageUrl != nil {
             cell.bubbleWidthAnchor?.constant = 200
             cell.textView.isHidden = true
         }
         return cell
-        
     }
     
     private func setupCell(cell:ChatMessageCell, message: Message){
@@ -453,11 +500,14 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             cell.bubbleView.backgroundColor = UIColor.clear
             cell.bubbleImageView.image = ChatMessageCell.blueBubbleImage
             cell.bubbleImageView.tintColor = ChatMessageCell.blueColour
+            cell.messageTimeStamp.textColor = UIColor.flatBlue()
             cell.profileImageView.isHidden = true
             cell.bubbleViewRightAnchor?.isActive = true
             cell.bubbleViewLeftAnchor?.isActive = false
+
             
         } else {
+            
             //Incoming Grey Message
             cell.bubbleView.backgroundColor = UIColor.clear
             cell.bubbleImageView.image = ChatMessageCell.grayBubbleImage
@@ -465,6 +515,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             cell.profileImageView.isHidden = false
             cell.bubbleViewRightAnchor?.isActive = false
             cell.bubbleViewLeftAnchor?.isActive = true
+            cell.messageTimeStamp.textColor = UIColor.lightGray
         }
         
         if let messageImageUrl = message.imageUrl{
@@ -531,8 +582,10 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     
     
     @objc func sendButtonPressed(){
-        let properties = ["text":inputTextView.text!] as [String : Any]
+        print("Send Button pressed")
+        let properties = ["text":inputTextFiled.text!] as [String : Any]
         sendMessageWithProperties(properties: properties as [String : AnyObject])
+        inputTextFiled.endEditing(true)
     }
     
     private func sendMessageWithImage(imageUrl : String, image: UIImage){
@@ -571,6 +624,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
     }
     
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         sendButtonPressed()
         return true
@@ -595,9 +649,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         zoomingImageView = UIImageView(frame: startingFrame!)
         self.zoomingImageView?.backgroundColor = UIColor.red
         self.zoomingImageView?.image = startingImageView.image
-        
-        
-        
+
         if let keyWindow = UIApplication.shared.keyWindow {
             blackBackgroundView = UIView(frame: keyWindow.frame)
             blackBackgroundView?.backgroundColor = UIColor.black
@@ -614,15 +666,12 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             shareButton?.setImage(#imageLiteral(resourceName: "share_ic"), for: .normal)
             shareButton?.translatesAutoresizingMaskIntoConstraints = false
             shareButton?.addTarget(self, action: #selector(shareButtonPressed), for: .touchUpInside)
-            
-            
-            
+
             keyWindow.addSubview(blackBackgroundView!)
             keyWindow.addSubview(zoomingImageView!)
             keyWindow.addSubview(backButton!)
             keyWindow.addSubview(shareButton!)
-            
-            
+ 
             //share Button Constraints
             shareButton?.leftAnchor.constraint(equalTo: (blackBackgroundView?.leftAnchor)!).isActive = true
             shareButton?.bottomAnchor.constraint(equalTo: (blackBackgroundView?.bottomAnchor)!, constant: -10).isActive = true
@@ -635,17 +684,6 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             backButton?.topAnchor.constraint(equalTo: (blackBackgroundView?.topAnchor)!, constant: 10).isActive = true
             backButton?.widthAnchor.constraint(equalToConstant: 80).isActive = true
             backButton?.heightAnchor.constraint(equalToConstant: 50).isActive = true
-            //            let sendbutton = UIButton(type: .system)
-            //            sendbutton.setTitle("Send", for: .normal)
-            //            sendbutton.translatesAutoresizingMaskIntoConstraints = false
-            //            sendbutton.addTarget(self, action: #selector(sendButtonPressed), for: .touchUpInside)
-            //            containerView.addSubview(sendbutton)
-            //            // Constraints x,y,width,height
-            //            sendbutton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-            //            sendbutton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-            //            sendbutton.widthAnchor.constraint(equalToConstant: 80).isActive = true
-            //            sendbutton.heightAnchor.constraint(equalTo: containerView.heightAnchor)
-            //
             
             UIView.animate(withDuration: 0.5, delay: 0,usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 
@@ -702,89 +740,94 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         activityViewController.popoverPresentationController?.sourceView?.addSubview(startingImageView!)
         self.present(activityViewController, animated: true, completion: nil)
+        
     }
+  
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+         sendbutton.setImage(#imageLiteral(resourceName: "ic_voice"), for: .normal)
         textField.resignFirstResponder()
+     
         return true
     }
+   
 }
 extension ChatLogController : UITextViewDelegate {
+////
+//    func textViewDidChange(_ textView: UITextView) {
+////        if textView.contentSize.height > textView.frame.size.height {
+////
+////            let fixedWidth = textView.frame.size.width
+////            textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+////
+////            var newFrame = textView.frame
+////            let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+////
+////
+////            newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
+////
+////            textView.frame = newFrame;
+////
+////
+////
+////        }
+////    }
 //
-    func textViewDidChange(_ textView: UITextView) {
-//        if textView.contentSize.height > textView.frame.size.height {
 //
-//            let fixedWidth = textView.frame.size.width
-//            textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-//
-//            var newFrame = textView.frame
-//            let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-//
-//
-//            newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
-//
-//            textView.frame = newFrame;
-//
-//
-//
-//        }
+//    print("text view did change\n")
+//    let textViewFixedWidth: CGFloat = textView.frame.size.width
+//    let newSize = textView.sizeThatFits(CGSize(width: textViewFixedWidth, height: CGFloat.greatestFiniteMagnitude))
+//    var newFrame: CGRect = textView.frame
+//    //
+//    var textViewYPosition = textView.frame.origin.y
+//    var heightDifference = textView.frame.height - newSize.height
+//    //
+//    if (abs(heightDifference) > 5) {
+//    newFrame.size = CGSize(width: max(newSize.width, textViewFixedWidth), height: newSize.height)
+//    newFrame.offsetBy(dx: 0.0, dy: heightDifference)
+//    //
+////    updateParentView(heightDifference: heightDifference)
 //    }
-
-    
-    print("text view did change\n")
-    let textViewFixedWidth: CGFloat = textView.frame.size.width
-    let newSize = textView.sizeThatFits(CGSize(width: textViewFixedWidth, height: CGFloat.greatestFiniteMagnitude))
-    var newFrame: CGRect = textView.frame
-    //
-    var textViewYPosition = textView.frame.origin.y
-    var heightDifference = textView.frame.height - newSize.height
-    //
-    if (abs(heightDifference) > 5) {
-    newFrame.size = CGSize(width: max(newSize.width, textViewFixedWidth), height: newSize.height)
-    newFrame.offsetBy(dx: 0.0, dy: heightDifference)
-    //
-//    updateParentView(heightDifference: heightDifference)
-    }
-    textView.frame = newFrame
-}
-    func updateParentView(heightDifference: CGFloat) {
-//        //
-//        var newContainerViewFrame: CGRect = inputContainerView.frame
-//        //
-//        let containerViewHeight = inputContainerView.frame.size.height
-//        print("container view height: \(containerViewHeight)\n")
-//        //
-//        let newContainerViewHeight = containerViewHeight + heightDifference
-//        print("new container view height: \(newContainerViewHeight)\n")
-//        //
-//        let containerViewHeightDifference = containerViewHeight - newContainerViewHeight
-//        print("container view height difference: \(containerViewHeightDifference)\n")
-//        //
-////        newContainerViewFrame.size = CGSizeMake(inputContainerView.frame.size.width, newContainerViewHeight)
+//    textView.frame = newFrame
+//}
+//    func updateParentView(heightDifference: CGFloat) {
+////        //
+////        var newContainerViewFrame: CGRect = inputContainerView.frame
+////        //
+////        let containerViewHeight = inputContainerView.frame.size.height
+////        print("container view height: \(containerViewHeight)\n")
+////        //
+////        let newContainerViewHeight = containerViewHeight + heightDifference
+////        print("new container view height: \(newContainerViewHeight)\n")
+////        //
+////        let containerViewHeightDifference = containerViewHeight - newContainerViewHeight
+////        print("container view height difference: \(containerViewHeightDifference)\n")
+////        //
+//////        newContainerViewFrame.size = CGSizeMake(inputContainerView.frame.size.width, newContainerViewHeight)
+////        newContainerViewFrame.size = CGSize(width: inputContainerView.frame.size.width, height: newContainerViewHeight)
+////        //
+//////        newContainerViewFrame.origin.y - containerViewHeightDifference
+////        //
+////        inputContainerView.frame = newContainerViewFrame
+//
+//
+//            //
+//            var newContainerViewFrame: CGRect = inputContainerView.frame
+//            //
+//            var containerViewHeight = inputContainerView.frame.size.height
+//            print("container view height: \(containerViewHeight)\n")
+//            //
+//            var newContainerViewHeight = containerViewHeight + heightDifference
+//            print("new container view height: \(newContainerViewHeight)\n")
+//            //
+//            var containerViewHeightDifference = containerViewHeight - newContainerViewHeight
+//            print("container view height difference: \(containerViewHeightDifference)\n")
+//            //
 //        newContainerViewFrame.size = CGSize(width: inputContainerView.frame.size.width, height: newContainerViewHeight)
-//        //
-////        newContainerViewFrame.origin.y - containerViewHeightDifference
-//        //
-//        inputContainerView.frame = newContainerViewFrame
-        
-        
-            //
-            var newContainerViewFrame: CGRect = inputContainerView.frame
-            //
-            var containerViewHeight = inputContainerView.frame.size.height
-            print("container view height: \(containerViewHeight)\n")
-            //
-            var newContainerViewHeight = containerViewHeight + heightDifference
-            print("new container view height: \(newContainerViewHeight)\n")
-            //
-            var containerViewHeightDifference = containerViewHeight - newContainerViewHeight
-            print("container view height difference: \(containerViewHeightDifference)\n")
-            //
-        newContainerViewFrame.size = CGSize(width: inputContainerView.frame.size.width, height: newContainerViewHeight)
-//         newContainerViewFrame.origin.y - containerViewHeightDifference
-            //
-            newContainerViewFrame.offsetBy(dx: 0.0, dy: containerViewHeightDifference)
-            //
-             inputContainerView.frame = newContainerViewFrame
-       
-    }
+////         newContainerViewFrame.origin.y - containerViewHeightDifference
+//            //
+//            newContainerViewFrame.offsetBy(dx: 0.0, dy: containerViewHeightDifference)
+//            //
+//             inputContainerView.frame = newContainerViewFrame
+//
+//    }
 }
