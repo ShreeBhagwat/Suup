@@ -23,7 +23,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
     }
     
-    
+    var audioRecord = AudioRecord()
     var messages = [Message]()
     
     func oberveMessages(){
@@ -111,7 +111,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         if newLength == 0 {
            
             self.recordAudioButton.setImage(#imageLiteral(resourceName: "ic_voice"), for: .normal)
-           self.recordAudioButton.addTarget(self, action: #selector(self.recordAudioButtonPressed), for: .touchUpInside)
+           self.recordAudioButton.addTarget(self, action: #selector(self.recordAudioButtonPressed(_:)), for: .touchDown)
+            self.recordAudioButton.addTarget(self, action: #selector(self.recordAudioButtonNotPressed(_:)), for: [.touchUpInside, .touchUpOutside])
            self.recordAudioButton.isEnabled = true
             self.recordAudioButton.isHidden = false
             self.sendbutton.isEnabled = false
@@ -213,8 +214,14 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         return containerView
     }()
     
-    @objc func recordAudioButtonPressed(){
-        print("recordAudioButtonPressed")
+    @objc func recordAudioButtonPressed(_ sender: Any?){
+       AudioRecord().startRec()
+      
+    }
+    @objc func recordAudioButtonNotPressed(_ sender: Any?){
+        audioRecord.soundRecorder.stop()
+        
+        
     }
     //Attachment Button
     @objc func attachmentButton(){
@@ -246,6 +253,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         cnPicker.delegate = self
         cnPicker.displayedPropertyKeys = [CNContactPhoneNumbersKey]
         self.present(cnPicker,animated: true,completion: nil)
+       
     }
     func sendLocation(){
         print("Send Location Pressed")
@@ -260,6 +268,17 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         present(imagePickerController, animated: true, completion: nil)
     }
+        func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
+            picker.dismiss(animated: true, completion: nil)
+            let name = CNContactFormatter.string(from: contact, style: .fullName)
+            for number in contact.phoneNumbers {
+                let mobile = number.value.value(forKey: "digits") as? String
+                if (mobile?.count)! > 7 {
+                    handelContactSend(contact: name!)
+                }
+                
+            }
+        }
     func openPhotos(){
         let imagePickerController = UIImagePickerController()
         imagePickerController.allowsEditing = true
@@ -268,16 +287,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         present(imagePickerController, animated: true, completion: nil)
     }
-    func contactPickerFunc(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
-        picker.dismiss(animated: true, completion: nil)
-        let name = CNContactFormatter.string(from: contact, style: .fullName)
-        for number in contact.phoneNumbers {
-            let mobile = number.value.value(forKey: "digits") as? String
-            if (mobile?.count)! > 7 {
-                print(number)
-            }
-        }
-    }
+
+    
     func contactPickerDidCancel(_ picker: CNContactPickerViewController) {
         print("Cancel Contact Picker")
     }
@@ -323,6 +334,27 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
     }
     
+    private func handelContactSend(contact : String){
+        let filename = NSUUID().uuidString
+        let storageRef = Storage.storage().reference()
+        let uid = Auth.auth().currentUser?.uid
+        let contactStorageRef = storageRef.child("contact_storage/\(String(describing: uid))").child(filename)
+        
+        if let uploadData:NSData = NSKeyedArchiver.archivedData(withRootObject: contact) as NSData {
+            contactStorageRef.putData(uploadData as Data, metadata: nil) { (snapshot, error) in
+                if error != nil {
+                    print("Failed to put COntact data",error)
+                }
+                contactStorageRef.downloadURL(completion: { (url, err ) in
+                    if  err != nil {
+                        print("Contact failed to download url",error)
+                    }
+                    let contactUrl = url?.absoluteString
+                })
+            }
+        }
+    }
+    
     private func handelImageSelectedForInfo(info:[String: AnyObject]){
         var selectedImageFromPicker:UIImage?
         
@@ -345,57 +377,35 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     private func uploadImageToFirebaseStorage(image: UIImage){
         let imageName = NSUUID().uuidString
         let ref = Storage.storage().reference().child("message_images").child(imageName)
+        
         if let uploadData = UIImageJPEGRepresentation(image, 0.2){
             ref.putData(uploadData, metadata: nil, completion: { (metadata, error) in
                 if error != nil {
                     print(" Failed to upload Image", error)
                 }
-                ref.downloadURL(completion: { (url, err) in
-                    if let err = err {
-                        print("Unable to upload image into storage due to \(err)")
-                    }
-                    let Url = url
-                    let messageImageURL = url?.absoluteString
-                    self.sendMessageWithImage(imageUrl: messageImageURL!, image: image)
-//                    self.downlaodImage(url: Url!,image: image)
-
+                
+//                ref.downloadURL(completion: { (url, err) in
+//                    if let err = err {
+//                        print("Unable to upload image into storage due to \(err)")
+//                    }
+//
+//
+//                    let messageImageURL = url?.absoluteString
+//                    self.sendMessageWithImage(imageUrl: messageImageURL!, image: image)
+                    let storeRef = Storage.storage().reference().child("message_images").child(imageName)
+                    let localDirURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                    let fileURL = localDirURL.appendingPathComponent(imageName)
+                    let downloadTask = ref.write(toFile: fileURL, completion: { (url, error) in
+                        if error != nil {
+                            print("Fetching url",error)
+                        }
+                        print("file url",fileURL)
+                        let messageImageUrl = fileURL.absoluteString
+                        self.sendMessageWithImage(imageUrl: messageImageUrl, image: image)
+//                    })
                 })
-            })
-        }
-    }
-    
-//    func downloadImage(url: URL, completion: ((UIImage) -> ())? = nil) {
-//
-//        URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
-//
-//            guard let httpURLResponse = response as? HTTPURLResponse,
-//                error == nil, httpURLResponse.statusCode == 200 else {
-//                    print(error?.localizedDescription ?? "Error status code \((response as? HTTPURLResponse)?.statusCode)")
-//                    return
-//            }
-//
-//            guard let data = data, let image = UIImage(data: data) else {
-//                print("No image data found")
-//                return
-//            }
-//
-//            completion?(image)
-//            print("Image Downloded ")
-//        }).resume()
-//    }
-//
-    func downlaodImage(url: URL, image: UIImage){
-        let downloadref = Storage.storage().reference(withPath: "message_images")
-        let localRef = URL(string: "file/private/var/mobile/Containers/Data/")!
         
-        let downlaodTask = downloadref.write(toFile: localRef) { (url, error) in
-            if error != nil {
-                print("error",error)
-            }
-            else {
-                let messageimageUrl = url?.absoluteString
-                self.sendMessageWithImage(imageUrl: messageimageUrl!, image: image)
-            }
+            })
         }
     }
     

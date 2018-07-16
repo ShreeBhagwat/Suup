@@ -4,6 +4,8 @@
 <dict>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Photo Notification</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Need Access To Contacts</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>using photo</string>
 	<key>CFBundleDevelopmentRegion</key>

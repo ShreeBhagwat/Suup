@@ -7,10 +7,15 @@
 //
 
 import Foundation
+import Firebase
+import Contacts
+
 class Users: NSObject {
   @objc  var id:String?
   @objc  var phoneNumber:String?
   @objc  var userName:String?
   @objc  var UserId:String?
   @objc  var profileImageUrl:String?
+
 }
+

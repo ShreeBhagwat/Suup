@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import UserNotifications
+import Contacts
 
 class MessageController: UITableViewController, UINavigationControllerDelegate {
     let cellId = "cellId"
