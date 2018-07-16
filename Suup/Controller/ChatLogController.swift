@@ -390,6 +390,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
 //                    }
 //
 //
+//
 //                    let messageImageURL = url?.absoluteString
 //                    self.sendMessageWithImage(imageUrl: messageImageURL!, image: image)
                     let storeRef = Storage.storage().reference().child("message_images").child(imageName)
