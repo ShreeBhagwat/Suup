@@ -26,7 +26,7 @@ class StartViewController: UIViewController {
             if user != nil {
                 // 3
                 print("\(String(describing: user?.phoneNumber))")
-                self.performSegue(withIdentifier: "goToChatDirectly", sender: nil)
+                self.performSegue(withIdentifier: "goToMessageDirectly", sender: nil)
             }
         }
     }
