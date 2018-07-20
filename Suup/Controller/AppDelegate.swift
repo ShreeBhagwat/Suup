@@ -1,4 +1,4 @@
-//
+// IN GOD WE TRUST//
 //  AppDelegate.swift
 //  Suup
 //
@@ -8,13 +8,13 @@
 
 import UIKit
 import Firebase
-import FirebaseUI
+import FirebaseDatabase
 import UserNotifications
 import FirebaseInstanceID
 import FirebaseMessaging
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 

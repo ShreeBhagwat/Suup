@@ -9,13 +9,11 @@ target 'Suup' do
 pod 'Firebase'
 pod 'Firebase/Auth'
 pod 'Firebase/Database'
+pod 'Firebase/Storage'
 pod 'SVProgressHUD'
 pod 'ChameleonFramework'
-pod 'FirebaseUI'
-pod 'FirebaseUI/Phone'
-pod 'FirebaseUI/Auth'
 pod 'FirebaseMessaging'
-pod 'GrowingTextView', '~> 0.5'
+
 
 end
 

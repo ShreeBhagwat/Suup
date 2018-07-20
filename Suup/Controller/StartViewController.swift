@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import FirebaseUI
+
 import Firebase
 
 class StartViewController: UIViewController {

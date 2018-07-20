@@ -89,6 +89,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor(patternImage: UIImage(named: "background")!)
+        
         collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         //        collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         collectionView?.alwaysBounceVertical = true
@@ -260,16 +261,17 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }
     func openCamera(){
         let imagePickerController = UIImagePickerController()
+        imagePickerController.delegate = self
         imagePickerController.sourceType = UIImagePickerControllerSourceType.camera
         imagePickerController.allowsEditing = true
         imagePickerController.cameraCaptureMode = .photo
         imagePickerController.modalPresentationStyle = .fullScreen
-        imagePickerController.delegate = self
+        
         
         present(imagePickerController, animated: true, completion: nil)
     }
         func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
-            picker.dismiss(animated: true, completion: nil)
+//            picker.dismiss(animated: true, completion: nil)
             let name = CNContactFormatter.string(from: contact, style: .fullName)
             for number in contact.phoneNumbers {
                 let mobile = number.value.value(forKey: "digits") as? String
@@ -281,8 +283,9 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
     func openPhotos(){
         let imagePickerController = UIImagePickerController()
-        imagePickerController.allowsEditing = true
         imagePickerController.delegate = self
+
+        imagePickerController.allowsEditing = true
         imagePickerController.mediaTypes = [kUTTypeImage,kUTTypeMovie] as [String]
         
         present(imagePickerController, animated: true, completion: nil)
@@ -355,7 +358,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
     }
     
-    private func handelImageSelectedForInfo(info:[String: AnyObject]){
+    @objc func handelImageSelectedForInfo(info:[String: AnyObject]){
         var selectedImageFromPicker:UIImage?
         
         if let editedImage = info["UIImagePickerControllerEditedImage"]{
@@ -373,9 +376,9 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
     }
-    
+    let imageName = NSUUID().uuidString + ".jpg"
     private func uploadImageToFirebaseStorage(image: UIImage){
-        let imageName = NSUUID().uuidString
+//        let imageName = NSUUID().uuidString + ".jpg"
         let ref = Storage.storage().reference().child("message_images").child(imageName)
         
         if let uploadData = UIImageJPEGRepresentation(image, 0.2){
@@ -384,32 +387,40 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                     print(" Failed to upload Image", error)
                 }
                 
-//                ref.downloadURL(completion: { (url, err) in
-//                    if let err = err {
-//                        print("Unable to upload image into storage due to \(err)")
-//                    }
-//
-//
-//
-//                    let messageImageURL = url?.absoluteString
-//                    self.sendMessageWithImage(imageUrl: messageImageURL!, image: image)
-                    let storeRef = Storage.storage().reference().child("message_images").child(imageName)
-                    let localDirURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-                    let fileURL = localDirURL.appendingPathComponent(imageName)
-                    let downloadTask = ref.write(toFile: fileURL, completion: { (url, error) in
-                        if error != nil {
-                            print("Fetching url",error)
-                        }
-                        print("file url",fileURL)
-                        let messageImageUrl = fileURL.absoluteString
-                        self.sendMessageWithImage(imageUrl: messageImageUrl, image: image)
-//                    })
+
+                ref.downloadURL(completion: { (url, err) in
+                    if let err = err {
+                        print("Unable to upload image into storage due to \(err)")
+                    }
+//                    self.downloadImageFromFirebase(url: url!, image: image)
+                    let messageImageURL = url?.absoluteString
+                    self.sendMessageWithImage(imageUrl: messageImageURL!, image: image)
+
                 })
         
             })
         }
     }
     
+    func downloadImageFromFirebase(url : URL, image:UIImage){
+        let ref = Storage.storage().reference().child("message_images").child(imageName)
+        let documentsPath1 = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
+        let logsPath = documentsPath1.appendingPathComponent("data")
+        print(logsPath!)
+        do {
+            try FileManager.default.createDirectory(atPath: logsPath!.path, withIntermediateDirectories: true, attributes: nil)
+        } catch let error as NSError {
+            print(error)
+    }
+        ref.write(toFile: logsPath!) { (url, error) in
+            if error != nil {
+                print(error)
+            }
+            let messageUrl = url?.absoluteString
+            self.sendMessageWithImage(imageUrl: messageUrl!, image: image)
+        }
+    
+    }
     
     override var inputAccessoryView: UIView?{
         get{
@@ -745,7 +756,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }
     @objc func shareButtonPressed(){
         imageBackButtonPressed()
-        let image = UIImage()
+        let image = startingImageView?.image
         let imageToShare = [image]
         var activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities:  nil)
         
