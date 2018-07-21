@@ -1,4 +1,6 @@
 // IN GOD WE TRUST//
+// God Is Great//
+
 //  AppDelegate.swift
 //  Suup
 //
