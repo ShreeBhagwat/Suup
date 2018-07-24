@@ -62,17 +62,17 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
                     let profilePicUrl = url?.absoluteString
                     print("Profile Image successfully uploaded into storage with url: \(profilePicUrl ?? "" )")
                     
+                    
+                    
                     let values = ["userName": self.NameText.text!,"phoneNumber":Auth.auth().currentUser?.phoneNumber,"userId":Auth.auth().currentUser?.uid,"profileImageUrl": profilePicUrl]
                     
                     self.registerUserIntoDatabaseWithUid(uid: uid!, values: values as [String : AnyObject])
+                   
                 })
             }
             
         }
-      
-        
-        
-               
+   
             }
     private func registerUserIntoDatabaseWithUid(uid: String, values:[String: AnyObject]){
         let usersDB = Database.database().reference().child("Users").child(uid)
@@ -86,8 +86,7 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
                 print(err as Any)
                 return
             }
-//            self.messageController?.fetchUser()
-//            self.messageController?.navigationItem.title = values["userName"] as? String
+
             let user = Users()
             user.setValuesForKeys(values)
             self.messageController?.navBarWithUser(user: user)

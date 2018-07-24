@@ -144,10 +144,13 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
             }else{
                 
                 if let dictonary = snapshot.value as? [String: AnyObject]{
+                    print("\(snapshot.value)")
                     self.navigationItem.title = dictonary["userName"] as? String
                     
                     let user = Users()
                     user.setValuesForKeys(dictonary)
+                   
+                    print(dictonary)
                     self.navBarWithUser(user: user)
                 }
             }
@@ -215,6 +218,11 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
    
     
     @objc func logOut(){
+        let user = Auth.auth().currentUser
+        
+        let myConnectionRef = Database.database().reference().child("User").child((user?.uid)!).child("connection").child(UsersPresence().userDeviceId!)
+        myConnectionRef.child("online").setValue(false)
+        myConnectionRef.child("last_online").setValue(NSNumber(value: Int(NSDate().timeIntervalSince1970)))
         do {
             try Auth.auth().signOut()
         } catch let logoutError {

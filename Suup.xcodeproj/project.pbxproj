@@ -10,6 +10,7 @@
 		B8F426C26548C49C3D131C7C /* Pods_Suup.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD6832CE4F7758C35689697 /* Pods_Suup.framework */; };
 		D01CE3BD20C01465001F7AC4 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01CE3BC20C01465001F7AC4 /* LoginViewController.swift */; };
 		D0381C2B20F7436100BBB21B /* AudioRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0381C2A20F7436100BBB21B /* AudioRecord.swift */; };
+		D0474DB72106E621009CD7DE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0474DB62106E621009CD7DE /* User.swift */; };
 		D04F35B220B672230055617D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04F35B120B672230055617D /* AppDelegate.swift */; };
 		D04F35B720B672230055617D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D04F35B520B672230055617D /* Main.storyboard */; };
 		D04F35B920B672260055617D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D04F35B820B672260055617D /* Assets.xcassets */; };
@@ -23,6 +24,7 @@
 		D06FB21A20C41E5F00C9F204 /* CustomMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D06FB21820C41E5F00C9F204 /* CustomMessageCell.swift */; };
 		D06FB21B20C41E5F00C9F204 /* CustomMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D06FB21920C41E5F00C9F204 /* CustomMessageCell.xib */; };
 		D06FB21D20C5935400C9F204 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = D06FB21C20C5935400C9F204 /* Message.swift */; };
+		D078E63D2105FCEC00A807CC /* UsersPresence.swift in Sources */ = {isa = PBXBuildFile; fileRef = D078E63C2105FCEC00A807CC /* UsersPresence.swift */; };
 		D0AD0BE520C2BDB300E35427 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AD0BE420C2BDB300E35427 /* ProfileViewController.swift */; };
 		D0B6BB8320D88F83001A74C4 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B6BB8220D88F83001A74C4 /* ChatMessageCell.swift */; };
 		D0D1636320CED7F7008E81B0 /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D1636220CED7F7008E81B0 /* Users.swift */; };
@@ -40,6 +42,7 @@
 		D01CE3BB20BFDD2E001F7AC4 /* Suup.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Suup.entitlements; sourceTree = "<group>"; };
 		D01CE3BC20C01465001F7AC4 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		D0381C2A20F7436100BBB21B /* AudioRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecord.swift; sourceTree = "<group>"; };
+		D0474DB62106E621009CD7DE /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		D04F35AE20B672230055617D /* Suup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Suup.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D04F35B120B672230055617D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D04F35B620B672230055617D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -55,6 +58,7 @@
 		D06FB21820C41E5F00C9F204 /* CustomMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMessageCell.swift; sourceTree = "<group>"; };
 		D06FB21920C41E5F00C9F204 /* CustomMessageCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomMessageCell.xib; sourceTree = "<group>"; };
 		D06FB21C20C5935400C9F204 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		D078E63C2105FCEC00A807CC /* UsersPresence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersPresence.swift; sourceTree = "<group>"; };
 		D0AD0BE420C2BDB300E35427 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		D0B6BB8220D88F83001A74C4 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		D0D1636220CED7F7008E81B0 /* Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
@@ -133,6 +137,7 @@
 				D0D1636920D3A02A008E81B0 /* ChatLogController.swift */,
 				D05F718120B7142200A22E59 /* ChatViewController.swift */,
 				D0381C2A20F7436100BBB21B /* AudioRecord.swift */,
+				D078E63C2105FCEC00A807CC /* UsersPresence.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -162,6 +167,7 @@
 				D06FB21C20C5935400C9F204 /* Message.swift */,
 				D0D1636220CED7F7008E81B0 /* Users.swift */,
 				D069D1EE20F9ECCE00641C51 /* Contact.swift */,
+				D0474DB62106E621009CD7DE /* User.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -334,6 +340,7 @@
 				D06FB21D20C5935400C9F204 /* Message.swift in Sources */,
 				D0B6BB8320D88F83001A74C4 /* ChatMessageCell.swift in Sources */,
 				D05F717A20B6EB6A00A22E59 /* VerificationViewController.swift in Sources */,
+				D0474DB72106E621009CD7DE /* User.swift in Sources */,
 				D05F717C20B6EB7C00A22E59 /* PhoneAuthViewController.swift in Sources */,
 				D0D1636520CFE2F1008E81B0 /* NewMessageViewController.swift in Sources */,
 				D0D3FEF720D4D75E00995147 /* UserCell.swift in Sources */,
@@ -343,6 +350,7 @@
 				D0AD0BE520C2BDB300E35427 /* ProfileViewController.swift in Sources */,
 				D05F718220B7142200A22E59 /* ChatViewController.swift in Sources */,
 				D0381C2B20F7436100BBB21B /* AudioRecord.swift in Sources */,
+				D078E63D2105FCEC00A807CC /* UsersPresence.swift in Sources */,
 				D0D1636320CED7F7008E81B0 /* Users.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
