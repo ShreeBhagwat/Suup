@@ -18,6 +18,7 @@ class Users: NSObject {
   @objc  var UserId:String?
   @objc  var profileImageUrl:String?
     @objc  var online = Bool()
+    @objc var typing = Bool()
     @objc var last_online:NSNumber?
 
 }

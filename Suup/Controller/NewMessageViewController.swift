@@ -78,21 +78,6 @@ class NewMessageViewController: UITableViewController {
           
         }, withCancel: nil)
     }
-//    func fetchOnlineStatus(){
-//        guard let uid = Auth.auth().currentUser?.uid else {
-//            return
-//        }
-//
-//        Database.database().reference().child("User").child(uid).child("connections").child("deviceId").child("last_online").observe(.value) { (snapshot) in
-//            if let dictionary = snapshot.value as? [String:AnyObject] {
-//                print("\(String(describing: snapshot.value))")
-//                let user1 = User()
-//                user1.userDeviceId = snapshot.key
-//                user1.setValuesForKeys(dictionary)
-//                print("uservalue",snapshot)
-//            }
-//        }
-//    }
 
     @objc func cancelButton(){
         dismiss(animated: true, completion: nil)
@@ -112,17 +97,22 @@ class NewMessageViewController: UITableViewController {
         let user = users[indexPath.row]
         cell.textLabel?.text = user.userName
         
-        let date = user.last_online!
-        let seconds = user.last_online?.doubleValue
-        let timeStamp = NSDate(timeIntervalSince1970: seconds!)
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "E, d MMM yy HH:mm:a"
-        cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
-        cell.detailTextLabel?.textColor = UIColor.lightGray
-        cell.detailTextLabel?.text = ("Last Seen: \(dateFormatter.string(from: timeStamp as Date))")
-        
+        if user.online == false {
+            let date = user.last_online!
+            let seconds = user.last_online?.doubleValue
+            let timeStamp = NSDate(timeIntervalSince1970: seconds!)
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "E, d MMM yy hh:mm:a"
+            cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
+            cell.detailTextLabel?.textColor = UIColor.lightGray
+            cell.detailTextLabel?.text = ("Last Seen: \(dateFormatter.string(from: timeStamp as Date))")
+            
+        }else {
+            cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
+            cell.detailTextLabel?.textColor = UIColor.flatGreen()
+            cell.detailTextLabel?.text = "online"
+        }
 
-        
         if let profileImageUrl = user.profileImageUrl {
             cell.profileImageView.loadImageFromCache(urlString: profileImageUrl)
         

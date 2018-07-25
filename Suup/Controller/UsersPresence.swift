@@ -53,6 +53,7 @@ class UsersPresence : NSObject{
     func checkUserStatus(userid:String){
         let myConnectionRef = Database.database().reference().child("Users").child(userid)
         myConnectionRef.child("online").setValue(true)
+        myConnectionRef.child("typing").setValue(false)
 //        myConnectionRef.child("last_online").setValue(Date().timeIntervalSince1970)
         myConnectionRef.child("last_online").setValue(NSNumber(value: Int(NSDate().timeIntervalSince1970)))
         
