@@ -27,7 +27,7 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
         
         tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
         
-//        observeMessages()
+
         observeUserMessage()
     
 }
@@ -144,8 +144,9 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
             }else{
                 
                 if let dictonary = snapshot.value as? [String: AnyObject]{
-                    print("\(snapshot.value)")
+//                    print("\(String(describing: snapshot.value))")
                     self.navigationItem.title = dictonary["userName"] as? String
+                   
                     
                     let user = Users()
                     user.setValuesForKeys(dictonary)
@@ -201,12 +202,6 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
         
         self.navigationItem.titleView = titleView
         
-//        var button = UIButton(type: .custom) as UIButton
-//
-//        button.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-//        button.backgroundColor = UIColor.red
-//        button.addTarget(self, action: #selector(showChatLogController), for: UIControlEvents.touchUpInside)
-//        self.navigationItem.titleView = button
     }
     
     @objc func showChatLogController(user: Users){
@@ -218,11 +213,8 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
    
     
     @objc func logOut(){
-        let user = Auth.auth().currentUser
-        
-        let myConnectionRef = Database.database().reference().child("User").child((user?.uid)!).child("connection").child(UsersPresence().userDeviceId!)
-        myConnectionRef.child("online").setValue(false)
-        myConnectionRef.child("last_online").setValue(NSNumber(value: Int(NSDate().timeIntervalSince1970)))
+        let uid = Auth.auth().currentUser?.uid
+        UsersPresence().userOffline(UserId: uid!)
         do {
             try Auth.auth().signOut()
         } catch let logoutError {

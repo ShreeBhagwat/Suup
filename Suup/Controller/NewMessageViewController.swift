@@ -16,6 +16,9 @@ class NewMessageViewController: UITableViewController {
 
     let cellId = "cellId"
     var users = [Users]()
+   
+    
+    
 //    lazy var searchBar = UISearchBar(frame: CGRect.zero)
     
     
@@ -26,6 +29,7 @@ class NewMessageViewController: UITableViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelButton))
         tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
         fetchUser()
+        
     }
 
     
@@ -52,25 +56,17 @@ class NewMessageViewController: UITableViewController {
                         // Array containing all unified contacts from everywhere
                         contacts.append(contact)
                         for phoneNumber in contact.phoneNumbers {
-//                            let ph = (contact.phoneNumbers[0].value ).value(forKey: "digits") as! String
-//                             let number = phoneNumber.value as? CNPhoneNumber
                             let number = (contact.phoneNumbers[0].value).value(forKey: "digits")as! String
                             let label = phoneNumber.label
-//                                let localizedLabel = CNLabeledValue<CNPhoneNumber>.localizedString(forLabel: label)
-                                //                        print("\(contact.givenName) \(contact.familyName) tel:\(localizedLabel) -- \(number.stringValue), email: \(contact.emailAddresses)")
-//                                print("phone number",number.stringValue)
-                                print("user phone",user.phoneNumber)
-                                print(number)
-                                print(contacts.count)
                                 if (user.phoneNumber == number){
-                        print("Similar Contact Found")
+                      
                         self.users.append(user)
                         DispatchQueue.main.async {
                         self.tableView.reloadData()
                         SVProgressHUD.dismiss()
                         }
                         } else {
-                    print("Contacts Not Compared")
+                                
                     }
                 }
 //            }
@@ -82,6 +78,21 @@ class NewMessageViewController: UITableViewController {
           
         }, withCancel: nil)
     }
+//    func fetchOnlineStatus(){
+//        guard let uid = Auth.auth().currentUser?.uid else {
+//            return
+//        }
+//
+//        Database.database().reference().child("User").child(uid).child("connections").child("deviceId").child("last_online").observe(.value) { (snapshot) in
+//            if let dictionary = snapshot.value as? [String:AnyObject] {
+//                print("\(String(describing: snapshot.value))")
+//                let user1 = User()
+//                user1.userDeviceId = snapshot.key
+//                user1.setValuesForKeys(dictionary)
+//                print("uservalue",snapshot)
+//            }
+//        }
+//    }
 
     @objc func cancelButton(){
         dismiss(animated: true, completion: nil)
@@ -96,11 +107,21 @@ class NewMessageViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! UserCell
         let user = users[indexPath.row]
         cell.textLabel?.text = user.userName
-        cell.detailTextLabel?.text = user.phoneNumber
+        
+        let date = user.last_online!
+        let seconds = user.last_online?.doubleValue
+        let timeStamp = NSDate(timeIntervalSince1970: seconds!)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E, d MMM yy HH:mm:a"
+        cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
+        cell.detailTextLabel?.textColor = UIColor.lightGray
+        cell.detailTextLabel?.text = ("Last Seen: \(dateFormatter.string(from: timeStamp as Date))")
+        
+
         
         if let profileImageUrl = user.profileImageUrl {
             cell.profileImageView.loadImageFromCache(urlString: profileImageUrl)
@@ -111,6 +132,7 @@ class NewMessageViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 74
     }
+    
     var messagesController: MessageController?
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         dismiss(animated: true) {
@@ -118,129 +140,69 @@ class NewMessageViewController: UITableViewController {
             self.messagesController?.showChatLogController(user: user)
         }
     }
+    func timeAgoSinceDate(date:NSDate, numericDates:Bool) -> String {
+        let calendar = NSCalendar.current
+        let unitFlags: Set<Calendar.Component> = [.minute, .hour, .day, .weekOfYear, .month, .year, .second]
+        let now = NSDate()
+        let earliest = now.earlierDate(date as Date)
+        let latest = (earliest == now as Date) ? date : now
+        let components = calendar.dateComponents(unitFlags, from: earliest as Date,  to: latest as Date)
+        
+        if (components.year! >= 2) {
+            return "\(components.year!) years ago"
+        } else if (components.year! >= 1){
+            if (numericDates){
+                return "1 year ago"
+            } else {
+                return "Last year"
+            }
+        } else if (components.month! >= 2) {
+            return "\(components.month!) months ago"
+        } else if (components.month! >= 1){
+            if (numericDates){
+                return "1 month ago"
+            } else {
+                return "Last month"
+            }
+        } else if (components.weekOfYear! >= 2) {
+            return "\(components.weekOfYear!) weeks ago"
+        } else if (components.weekOfYear! >= 1){
+            if (numericDates){
+                return "1 week ago"
+            } else {
+                return "Last week"
+            }
+        } else if (components.day! >= 2) {
+            return "\(components.day!) days ago"
+        } else if (components.day! >= 1){
+            if (numericDates){
+                return "1 day ago"
+            } else {
+                return "Yesterday"
+            }
+        } else if (components.hour! >= 2) {
+            return "\(components.hour!) hours ago"
+        } else if (components.hour! >= 1){
+            if (numericDates){
+                return "1 hour ago"
+            } else {
+                return "An hour ago"
+            }
+        } else if (components.minute! >= 2) {
+            return "\(components.minute!) minutes ago"
+        } else if (components.minute! >= 1){
+            if (numericDates){
+                return "1 minute ago"
+            } else {
+                return "A minute ago"
+            }
+        } else if (components.second! >= 3) {
+            return "\(components.second!) seconds ago"
+        } else {
+            return "Just now"
+        }
+        
+    }
+    
 }
-
-
-
-
-
-
-//    private func fetchcontact2(){
-//        let contactStore = CNContactStore()
-//        var contacts = [CNContact]()
-//        let keys = [
-//            CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
-//            CNContactPhoneNumbersKey,
-//            CNContactEmailAddressesKey
-//            ] as [Any]
-//        let request = CNContactFetchRequest(keysToFetch: keys as! [CNKeyDescriptor])
-//        do {
-//            try contactStore.enumerateContacts(with: request){
-//                (contact, stop) in
-//                // Array containing all unified contacts from everywhere
-//                contacts.append(contact)
-//                for phoneNumber in contact.phoneNumbers {
-//                    if let number = phoneNumber.value as? CNPhoneNumber, let label = phoneNumber.label {
-//                        let localizedLabel = CNLabeledValue<CNPhoneNumber>.localizedString(forLabel: label)
-////                        print("\(contact.givenName) \(contact.familyName) tel:\(localizedLabel) -- \(number.stringValue), email: \(contact.emailAddresses)")
-//                        print("phone number",number)
-//                    }
-//                }
-//            }
-//
-//        } catch {
-//            print("unable to fetch contacts")
-//        }
-//    }
-////////////////
-///////
-//                let store = CNContactStore()
-////                var con : [CNContact] = []
-//                store.requestAccess(for: .contacts) { (granted, err) in
-//                    if let err = err {
-//                        print("Failed to request access:", err)
-//                        return
-//                    }
-//                    if granted {
-//                        print("Access granted")
-//
-//                        let keys = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey]
-//                        let request = CNContactFetchRequest(keysToFetch: keys as [CNKeyDescriptor])
-//
-//                        do {
-//
-//                            try store.enumerateContacts(with: request, usingBlock: { (contact, stopPointerIfYouWantToStopEnumerating) in
-//
-//
-//                                let ph = (contact.phoneNumbers[0].value ).value(forKey: "digits") as! String
-//                                self.contacts.append(Contact(givenName: contact.givenName, familyName: contact.familyName, phoneNumbers: ph))
-//                                print("user phone no",user.phoneNumber)
-//
-//
-//
-//                                if (user.phoneNumber == ph){
-//                                    print("Similar Contact Found")
-//                                    self.users.append(user)
-//                                    DispatchQueue.main.async {
-//                                        self.tableView.reloadData()
-//                                        SVProgressHUD.dismiss()
-//                                    }
-//                                } else {
-////                                    print("user ph no",user.phoneNumber)
-////                                    print("phone ph no", ph)
-//                                    print("Contacts Not Compared")
-////                                    self.tableView.removeAll
-//                                }
-//
-//
-//                            })
-//
-//                        } catch let err {
-//                            print("Failed to enumerate contacts:", err)
-//                        }
-//
-//                    } else {
-//                        print("Access denied..")
-//                    }
-//                }
-///////////////////
-//    private func fetchContacts() {
-//        print("Attempting to fetch contacts today..")
-//
-//        let store = CNContactStore()
-//
-//        store.requestAccess(for: .contacts) { (granted, err) in
-//            if let err = err {
-//                print("Failed to request access:", err)
-//                return
-//            }
-//            if granted {
-//                print("Access granted")
-//
-//                let keys = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey]
-//                let request = CNContactFetchRequest(keysToFetch: keys as [CNKeyDescriptor])
-//
-//                do {
-//
-//                    try store.enumerateContacts(with: request, usingBlock: { (contact, stopPointerIfYouWantToStopEnumerating) in
-//
-//
-//                        let ph = (contact.phoneNumbers[0].value ).value(forKey: "digits") as! String
-//                        self.contacts.append(Contact(givenName: contact.givenName, familyName: contact.familyName, phoneNumbers: ph))
-//                        print("fetch Contact method",self.contacts)
-//
-//                    })
-//
-//                } catch let err {
-//                    print("Failed to enumerate contacts:", err)
-//                }
-//
-//            } else {
-//                print("Access denied..")
-//            }
-//        }
-//    }
-//
-
-//
 

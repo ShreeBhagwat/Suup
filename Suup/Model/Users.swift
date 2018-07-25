@@ -17,20 +17,8 @@ class Users: NSObject {
   @objc  var userName:String?
   @objc  var UserId:String?
   @objc  var profileImageUrl:String?
-
-    
-//    init(dictionary:[String: AnyObject]) {
-//        super.init()
-//        
-//        id = dictionary["id"] as? String
-//        phoneNumber = dictionary["phoneNumber"] as? String
-//        userName = dictionary["userName"] as? String
-//        profileImageUrl = dictionary["profileImageUrl"] as? String
-//        connections = dictionary["connections"] as? String
-//        last_online = dictionary["last_online"] as? NSNumber
-//        online = dictionary["online"] as? Bool
-//        
-//    }
+    @objc  var online = Bool()
+    @objc var last_online:NSNumber?
 
 }
 

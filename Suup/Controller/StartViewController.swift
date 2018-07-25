@@ -28,7 +28,8 @@ class StartViewController: UIViewController {
                 print("\(String(describing: user?.phoneNumber))")
               
                let uid = Auth.auth().currentUser?.uid
-                UsersPresence().manageConnections(UserId: uid!)
+//                UsersPresence().manageConnections(UserId: uid!)
+                UsersPresence().checkUserStatus(userid: uid!)
                 self.performSegue(withIdentifier: "goToMessageDirectly", sender: nil)
                 
             }

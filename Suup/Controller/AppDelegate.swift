@@ -46,9 +46,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidEnterBackground(_ application: UIApplication) {
       Messaging.messaging().shouldEstablishDirectChannel = false
+        let uid = Auth.auth().currentUser?.uid
+        UsersPresence().userOffline(UserId: uid!)
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        let uid = Auth.auth().currentUser?.uid
+        UsersPresence().userOnline(UserId: uid!)
         FBHandler()
     }
 
