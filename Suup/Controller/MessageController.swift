@@ -146,8 +146,7 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
                 if let dictonary = snapshot.value as? [String: AnyObject]{
 //                    print("\(String(describing: snapshot.value))")
                     self.navigationItem.title = dictonary["userName"] as? String
-                   
-                    
+
                     let user = Users()
                     user.setValuesForKeys(dictonary)
                    

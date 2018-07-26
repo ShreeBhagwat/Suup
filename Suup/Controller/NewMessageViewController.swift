@@ -96,29 +96,48 @@ class NewMessageViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! UserCell
         let user = users[indexPath.row]
         cell.textLabel?.text = user.userName
+        let uid = Auth.auth().currentUser?.uid
         
-        if user.online == false {
-            let date = user.last_online!
-            let seconds = user.last_online?.doubleValue
-            let timeStamp = NSDate(timeIntervalSince1970: seconds!)
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "E, d MMM yy hh:mm:a"
-            cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
-            cell.detailTextLabel?.textColor = UIColor.lightGray
-            cell.detailTextLabel?.text = ("Last Seen: \(dateFormatter.string(from: timeStamp as Date))")
-            
-        }else {
+        if (user.online as? Bool)!{
             cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
             cell.detailTextLabel?.textColor = UIColor.flatGreen()
             cell.detailTextLabel?.text = "online"
+        } else {
+             let date = user.last_online!
+             let seconds = user.last_online?.doubleValue
+             let timeStamp = NSDate(timeIntervalSince1970: seconds!)
+             let dateFormatter = DateFormatter()
+             dateFormatter.dateFormat = "E, d MMM yy hh:mm:a"
+             cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
+             cell.detailTextLabel?.textColor = UIColor.lightGray
+             cell.detailTextLabel?.text = ("Last Seen: \(dateFormatter.string(from: timeStamp as Date))")
         }
-
+        
+//                if user.online == false {
+//                    let date = user.last_online!
+//                    let seconds = user.last_online?.doubleValue
+//                    let timeStamp = NSDate(timeIntervalSince1970: seconds!)
+//                    let dateFormatter = DateFormatter()
+//                    dateFormatter.dateFormat = "E, d MMM yy hh:mm:a"
+//                    cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
+//                    cell.detailTextLabel?.textColor = UIColor.lightGray
+//                    cell.detailTextLabel?.text = ("Last Seen: \(dateFormatter.string(from: timeStamp as Date))")
+//
+//                }else {
+//                    cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
+//                    cell.detailTextLabel?.textColor = UIColor.flatGreen()
+//                    cell.detailTextLabel?.text = "online"
+//                }
+       
         if let profileImageUrl = user.profileImageUrl {
             cell.profileImageView.loadImageFromCache(urlString: profileImageUrl)
         
         }
         return cell
     }
+    
+    
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 74
     }

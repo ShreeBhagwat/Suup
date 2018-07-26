@@ -14,9 +14,7 @@ import FirebaseAuth
 
 
 class UsersPresence : NSObject{
-    var userTime = [User]()
-    //Getting Device ID
-    let userDeviceId = UIDevice.current.identifierForVendor?.uuidString
+
     
 //    func manageConnections(UserId: String){
 //
@@ -58,10 +56,11 @@ class UsersPresence : NSObject{
         myConnectionRef.child("last_online").setValue(NSNumber(value: Int(NSDate().timeIntervalSince1970)))
         
         // Observe For User logged in or logged out
-        myConnectionRef.observe(.value) { (snapshot) in
+        myConnectionRef.observe(.childChanged) { (snapshot) in
             guard let connected = snapshot.value as? Bool, connected else {return}
-            self.userTime.append(snapshot.value as! User)
         }
     }
+    
+
     
 }
