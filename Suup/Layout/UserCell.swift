@@ -24,9 +24,6 @@ class UserCell : UITableViewCell {
                 dateFormatter.dateFormat = "hh:mm: a"
                 timeLabel.text = dateFormatter.string(from: timeStampDate as Date)
             }
-            
-           
-     
         }
     }
     

@@ -156,11 +156,7 @@ class ChatMessageCell: UICollectionViewCell {
         bubbleImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
         bubbleImageView.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor).isActive = true
         bubbleImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
-    
-        
-        
-    
-        
+
         //IOS 9 Constraints: x, y , width, height
 //        textView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         textView.leftAnchor.constraint(equalTo: bubbleImageView.leftAnchor, constant: 10).isActive = true

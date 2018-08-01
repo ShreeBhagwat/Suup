@@ -11,29 +11,23 @@ import Firebase
 import UserNotifications
 import Contacts
 
-class MessageController: UITableViewController, UINavigationControllerDelegate {
+class MessageController: UITableViewController, UINavigationControllerDelegate, UISearchBarDelegate {
     let cellId = "cellId"
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
+
         navigationItem.leftBarButtonItem  = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(logOut))
-        
         let image = UIImage(named:"newMessageIcon")
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(newMessage))
-        
         checkIfUserLoggedIn()
-        
         tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
-        
-
         observeUserMessage()
-    
 }
+
     var messages = [Message]()
     var messageDictionary = [String:Message]()
-    
+
     func observeUserMessage(){
         guard let uid = Auth.auth().currentUser?.uid else {
             return
@@ -42,7 +36,6 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
         ref.observe(.childAdded, with: { (snapshot) in
             let userId = snapshot.key
             Database.database().reference().child("user-messages").child(uid).child(userId).observe(.childAdded, with: { (snapshot) in
-        
                 let messageId = snapshot.key
                 self.fetchMessageWithMessageId(messageId: messageId)
                 ref.keepSynced(true)
@@ -62,8 +55,10 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
                     
                 }
                 self.attemptReloadOfTable()
+            
             }
         }, withCancel: nil)
+       
     }
     
     func attemptReloadOfTable(){
@@ -108,7 +103,6 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
         let ref = Database.database().reference().child("Users").child(chatPartnerId)
         ref .observeSingleEvent(of: .value, with: { (snapshot) in
             print(snapshot)
-            
             guard let dictionary = snapshot.value as? [String:AnyObject] else {return}
             let user = Users()
             user.id = chatPartnerId
@@ -132,7 +126,6 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
             fetchUser()
             }
         }
-    
 
     func fetchUser(){
         guard let uid = Auth.auth().currentUser?.uid else {
@@ -144,6 +137,9 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
             }else{
                 
                 if let dictonary = snapshot.value as? [String: AnyObject]{
+//                    dictonary.forEach({ (<#(key: String, value: AnyObject)#>) in
+//                        <#code#>
+//                    })
 //                    print("\(String(describing: snapshot.value))")
                     self.navigationItem.title = dictonary["userName"] as? String
 
@@ -162,12 +158,10 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
         messages.removeAll()
         messageDictionary.removeAll()
         tableView.reloadData()
-        
         observeUserMessage()
         let titleView = UILabel()
         titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 500)
 //        titleView.backgroundColor = UIColor.blue
-        
         let profileImageView = UIImageView()
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.contentMode = .scaleAspectFit
@@ -177,8 +171,6 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
              profileImageView.loadImageFromCache(urlString: profileImageUrl)
         }
        titleView.addSubview(profileImageView)
-       
-        
         //Constraints
         //x,y,width,height constraints.
         profileImageView.leftAnchor.constraint(equalTo: titleView.leftAnchor).isActive = true
@@ -196,18 +188,14 @@ class MessageController: UITableViewController, UINavigationControllerDelegate {
         nameLabel.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor).isActive = true
         nameLabel.rightAnchor.constraint(equalTo: titleView.rightAnchor).isActive = true
         nameLabel.heightAnchor.constraint(equalTo: profileImageView.heightAnchor).isActive = true
-        
-        
-        
         self.navigationItem.titleView = titleView
-        
     }
+    
     
     @objc func showChatLogController(user: Users){
         let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
         chatLogController.user = user
         navigationController?.pushViewController(chatLogController, animated: true)
-
     }
    
     

@@ -7,9 +7,6 @@
 //
 
 import Foundation
-class User : NSObject {
-    @objc var connections:String?
-    @objc var userDeviceId:String?
-    @objc var last_online:NSNumber?
-    var online:Bool?
+struct User {
+     var userName:String?
 }

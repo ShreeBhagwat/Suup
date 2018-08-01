@@ -11,27 +11,50 @@ import Firebase
 import Contacts
 import SVProgressHUD
 
-class NewMessageViewController: UITableViewController {
+class NewMessageViewController: UITableViewController , UISearchResultsUpdating{
  
 
     let cellId = "cellId"
     var users = [Users]()
-   
-    
-    
+    let searchController = UISearchController(searchResultsController: nil)
+    var filteredArray = [Users]()
+
 //    lazy var searchBar = UISearchBar(frame: CGRect.zero)
-    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.placeholder = "Search Users"
+        searchController.obscuresBackgroundDuringPresentation = false
+        definesPresentationContext = false
         navigationItem.title = "Chats"
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelButton))
+        if #available(iOS 11.0, *) {
+            navigationItem.searchController = searchController
+        } else {
+            // Fallback on earlier versions
+        }
         tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
         fetchUser()
         
     }
-
+    func updateSearchResults(for searchController: UISearchController) {
+        filterContentForSearchText(searchController.searchBar.text!)
+    }
+    func searchBarEmpty() -> Bool{
+        return searchController.searchBar.text?.isEmpty ?? true
+    }
+    
+    func filterContentForSearchText(_ searchText: String, scope: String = "All") {
+        filteredArray = users.filter({ user -> Bool in
+          return  (user.userName?.lowercased().contains(searchText.lowercased()))!
+        })
+        self.tableView.reloadData()
+    }
+    func isFiltering()->Bool{
+        return searchController.isActive && !searchBarEmpty()
+    }
     
     @objc func fetchUser(){
         SVProgressHUD.show()
@@ -41,7 +64,6 @@ class NewMessageViewController: UITableViewController {
                 let user = Users()
                 user.id = snapshot.key
              user.setValuesForKeys(dictonary)
-//////////////////////////////////////////////
                 let contactStore = CNContactStore()
                 var contacts = [CNContact]()
                 let keys = [
@@ -59,7 +81,6 @@ class NewMessageViewController: UITableViewController {
                             let number = (contact.phoneNumbers[0].value).value(forKey: "digits")as! String
                             let label = phoneNumber.label
                                 if (user.phoneNumber == number){
-                      
                         self.users.append(user)
                         DispatchQueue.main.async {
                         self.tableView.reloadData()
@@ -69,13 +90,11 @@ class NewMessageViewController: UITableViewController {
                                 
                     }
                 }
-//            }
         }
-        } catch {
-        print("unable to fetch contacts")
-        }
-    }
-          
+                        } catch {
+                    print("unable to fetch contacts")
+                }
+            }
         }, withCancel: nil)
     }
 
@@ -84,54 +103,50 @@ class NewMessageViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if users.count > 0 {
-        return users.count
+        if isFiltering(){
+            return filteredArray.count
         }else {
-            return 0
+            if users.count > 0 {
+                return users.count
+            }else {
+                return 0
+            }
         }
+        
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! UserCell
+        let user: Users
+        if isFiltering(){
+        user = filteredArray[indexPath.row]
+        } else {
         let user = users[indexPath.row]
+        
         cell.textLabel?.text = user.userName
         let uid = Auth.auth().currentUser?.uid
+//       cell.detailTextLabel?.text = user.online
+            if (user.online as? Bool)!{
+                cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
+                cell.detailTextLabel?.textColor = UIColor.flatGreen()
+                cell.detailTextLabel?.text = "online"
+            } else {
+                let date = user.last_online!
+                let seconds = user.last_online?.doubleValue
+                let timeStamp = NSDate(timeIntervalSince1970: seconds!)
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "E, d MMM yy hh:mm:a"
+                cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
+                cell.detailTextLabel?.textColor = UIColor.lightGray
+                cell.detailTextLabel?.text = ("Last Seen: \(dateFormatter.string(from: timeStamp as Date))")
+            
+            }
         
-        if (user.online as? Bool)!{
-            cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
-            cell.detailTextLabel?.textColor = UIColor.flatGreen()
-            cell.detailTextLabel?.text = "online"
-        } else {
-             let date = user.last_online!
-             let seconds = user.last_online?.doubleValue
-             let timeStamp = NSDate(timeIntervalSince1970: seconds!)
-             let dateFormatter = DateFormatter()
-             dateFormatter.dateFormat = "E, d MMM yy hh:mm:a"
-             cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
-             cell.detailTextLabel?.textColor = UIColor.lightGray
-             cell.detailTextLabel?.text = ("Last Seen: \(dateFormatter.string(from: timeStamp as Date))")
-        }
-        
-//                if user.online == false {
-//                    let date = user.last_online!
-//                    let seconds = user.last_online?.doubleValue
-//                    let timeStamp = NSDate(timeIntervalSince1970: seconds!)
-//                    let dateFormatter = DateFormatter()
-//                    dateFormatter.dateFormat = "E, d MMM yy hh:mm:a"
-//                    cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
-//                    cell.detailTextLabel?.textColor = UIColor.lightGray
-//                    cell.detailTextLabel?.text = ("Last Seen: \(dateFormatter.string(from: timeStamp as Date))")
-//
-//                }else {
-//                    cell.detailTextLabel?.font = UIFont.italicSystemFont(ofSize: 12)
-//                    cell.detailTextLabel?.textColor = UIColor.flatGreen()
-//                    cell.detailTextLabel?.text = "online"
-//                }
-       
         if let profileImageUrl = user.profileImageUrl {
             cell.profileImageView.loadImageFromCache(urlString: profileImageUrl)
-        
+            }
+            
         }
         return cell
     }
@@ -145,9 +160,16 @@ class NewMessageViewController: UITableViewController {
     var messagesController: MessageController?
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         dismiss(animated: true) {
-            let user = self.users[indexPath.row]
-            self.messagesController?.showChatLogController(user: user)
+            let user: Users
+            if self.isFiltering(){
+                user = self.filteredArray[indexPath.row]
+
+            } else {
+                let user1 = self.users[indexPath.row]
+          
+            self.messagesController?.showChatLogController(user: user1)
         }
+    }
     }
     func timeAgoSinceDate(date:NSDate, numericDates:Bool) -> String {
         let calendar = NSCalendar.current

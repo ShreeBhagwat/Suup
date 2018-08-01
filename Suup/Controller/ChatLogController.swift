@@ -13,15 +13,16 @@ import ChameleonFramework
 import MobileCoreServices
 import AVFoundation
 import ContactsUI
+import Alamofire
 
 
 class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CNContactPickerDelegate {
     var user: Users? {
         didSet{
-//            navigationItem.title = user?.userName
+            navigationItem.title = user?.userName
             
-            self.navigationItem.titleView = setTitle(title: (user?.userName)!, subtitle: subtitleViewText())
-            
+//            self.navigationItem.titleView = setTitle(title: (user?.userName)!, subtitle: subtitleViewText())
+       
             oberveMessages()
         }
     }
@@ -61,7 +62,9 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }
     
     func subtitleViewText() -> String {
+
         let subtitleViewText = UILabel()
+
         if user?.online == false {
             let date = user?.last_online!
             let seconds = user?.last_online?.doubleValue
@@ -142,7 +145,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor(patternImage: UIImage(named: "background")!)
-        
+       startAudioSession()
+       setupRecorder()
         collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         //        collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         collectionView?.alwaysBounceVertical = true
@@ -165,8 +169,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         if newLength == 0 {
            
             self.recordAudioButton.setImage(#imageLiteral(resourceName: "ic_voice"), for: .normal)
-           self.recordAudioButton.addTarget(self, action: #selector(self.recordAudioButtonPressed(_:)), for: .touchDown)
-            self.recordAudioButton.addTarget(self, action: #selector(self.recordAudioButtonNotPressed(_:)), for: [.touchUpInside, .touchUpOutside])
+            self.recordAudioButton.addTarget(self, action: #selector(recordAudioButtonPressed), for: .touchDown)
+            self.recordAudioButton.addTarget(self, action: #selector(recordAudioButtonNotPressed), for: .touchUpInside)
            self.recordAudioButton.isEnabled = true
             self.recordAudioButton.isHidden = false
             self.sendbutton.isEnabled = false
@@ -268,14 +272,15 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         return containerView
     }()
     
-    @objc func recordAudioButtonPressed(_ sender: Any?){
-       AudioRecord().startRec()
-      
+    @objc func recordAudioButtonPressed(){
+        print("Audio Record began")
+//       setupRecorder()
+      startRecording()
+
     }
-    @objc func recordAudioButtonNotPressed(_ sender: Any?){
-        audioRecord.soundRecorder.stop()
-        
-        
+    @objc func recordAudioButtonNotPressed(){
+            print("stop")
+        finishRecording(success: true)
     }
     //Attachment Button
     @objc func attachmentButton(){
@@ -364,7 +369,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }
     
     private func handelVideoSelectedForUrl(url: NSURL){
-        let filename = NSUUID().uuidString
+        let filename = NSUUID().uuidString + ".mov"
         let storageRef = Storage.storage().reference()
         let uid = Auth.auth().currentUser?.uid
         let videoStorgareRef = storageRef.child("message_Video/\(String(describing: uid))").child(filename)
@@ -377,17 +382,39 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                     print("Failed To Upload Video",err)
                 }
                 if let videoStorageUrl = url?.absoluteString {
+                    if let thumbnailImage = self.thumbnailImageForVideoFileUrl(videoFileUrl: url!){
+                        self.uploadImageToFirebaseStorage(image: thumbnailImage, completion: { (imageUrl) in
+                            let properties:[String:AnyObject] = (["imageUrl":imageUrl,"imageWidth":thumbnailImage.size.width, "imageHeight":thumbnailImage.size.height,"videoStorageUrl" : videoStorageUrl] as? [String:AnyObject])!
+                            self.sendMessageWithProperties(properties: properties)
+                        })
+                        
+                    }
+                    
                 }
             })
         }
         uploadTask.observe(.progress) { (snapshot) in
             if let completedUnitCount = snapshot.progress?.completedUnitCount {
-                self.navigationItem.title = String(completedUnitCount)
+//                self.navigationItem.title = String(completedUnitCount)
+                
             }
         }
         uploadTask.observe(.success) { (snapshot) in
             self.navigationItem.title = self.user?.userName
         }
+    }
+    
+    private func thumbnailImageForVideoFileUrl(videoFileUrl: URL) -> UIImage?{
+        let asset = AVAsset(url: videoFileUrl)
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+        do {
+            let thumbnailImage = try imageGenerator.copyCGImage(at: CMTimeMake(1, 60), actualTime: nil)
+            return UIImage(cgImage: thumbnailImage)
+
+        } catch let err {
+            print(err)
+        }
+        return nil
     }
     
     private func handelContactSend(contact : String){
@@ -421,7 +448,9 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
         
         if let selectedImage = selectedImageFromPicker{
-            uploadImageToFirebaseStorage(image: selectedImage)
+            uploadImageToFirebaseStorage(image: selectedImage) { (messageImageUrl) in
+                self.sendMessageWithImage(imageUrl: messageImageUrl, image: selectedImage)
+            }
         }
     }
     
@@ -429,9 +458,10 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
     }
-    let imageName = NSUUID().uuidString + ".jpg"
-    private func uploadImageToFirebaseStorage(image: UIImage){
-//        let imageName = NSUUID().uuidString + ".jpg"
+    
+
+    private func uploadImageToFirebaseStorage(image: UIImage, completion: @escaping (_ imageUrl: String) -> ()){
+        let imageName = NSUUID().uuidString + ".jpg"
         let ref = Storage.storage().reference().child("message_images").child(imageName)
         
         if let uploadData = UIImageJPEGRepresentation(image, 0.2){
@@ -439,15 +469,12 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 if error != nil {
                     print(" Failed to upload Image", error)
                 }
-                
-
                 ref.downloadURL(completion: { (url, err) in
                     if let err = err {
                         print("Unable to upload image into storage due to \(err)")
                     }
-//                    self.downloadImageFromFirebase(url: url!, image: image)
                     let messageImageURL = url?.absoluteString
-                    self.sendMessageWithImage(imageUrl: messageImageURL!, image: image)
+                    completion(messageImageURL!)
 
                 })
         
@@ -455,25 +482,6 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
     }
     
-    func downloadImageFromFirebase(url : URL, image:UIImage){
-        let ref = Storage.storage().reference().child("message_images").child(imageName)
-        let documentsPath1 = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
-        let logsPath = documentsPath1.appendingPathComponent("data")
-        print(logsPath!)
-        do {
-            try FileManager.default.createDirectory(atPath: logsPath!.path, withIntermediateDirectories: true, attributes: nil)
-        } catch let error as NSError {
-            print(error)
-    }
-        ref.write(toFile: logsPath!) { (url, error) in
-            if error != nil {
-                print(error)
-            }
-            let messageUrl = url?.absoluteString
-            self.sendMessageWithImage(imageUrl: messageUrl!, image: image)
-        }
-    
-    }
     
     override var inputAccessoryView: UIView?{
         get{
@@ -556,7 +564,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         // Bubblw View Modification
         if let text = message.text{
-            cell.bubbleWidthAnchor?.constant = estimatedFrameForText(text: text).width + 40 + cell.messageTimeStamp.frame.width
+            cell.bubbleWidthAnchor?.constant = estimatedFrameForText(text: text).width + 100
             cell.textView.isHidden = false
         } else if message.imageUrl != nil {
             cell.bubbleWidthAnchor?.constant = 200
@@ -657,7 +665,6 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     
     
     @objc func sendButtonPressed(){
-        print("Send Button pressed")
         let properties = ["text":inputTextFiled.text!] as [String : Any]
         sendMessageWithProperties(properties: properties as [String : AnyObject])
         inputTextFiled.endEditing(true)
@@ -676,14 +683,14 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let childRef = ref.childByAutoId()
         let toId = user!.id!
         let fromId = Auth.auth().currentUser!.uid
+        let DeviceId = AppDelegate.DeviceId
         let timeStamp = NSNumber(value: Int(NSDate().timeIntervalSince1970))
         
-        var values = ["toId": toId,"fromId": fromId,"timeStamp":timeStamp] as [String : Any]
+        var values = ["toId": toId,"fromId": fromId,"timeStamp":timeStamp,"DeviceId":DeviceId] as [String : Any]
         
         //Append Properties dictionary onto Values
         // Key = $0 Value = $1
         properties.forEach({values[$0] = $1})
-        
         childRef.updateChildValues(values) { (error, ref) in
             if error != nil {
                 print(error)
@@ -695,7 +702,21 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             userMessagesRef.updateChildValues([messageId: 1])
             let recipientUsersMessageRef = Database.database().reference().child("user-messages").child(toId).child(fromId)
             recipientUsersMessageRef.updateChildValues([messageId: 1])
-            
+//            self.setupPushNotification(DeviceId: DeviceId)
+        }
+    }
+    func setupPushNotification(DeviceId:String){
+        guard let message = inputTextFiled.text else {return}
+        let title = user?.userName
+        let body = message
+        let toDeviceId = DeviceId
+        var header:HTTPHeaders = HTTPHeaders()
+        
+        header = ["content-type":"application/json","Authorization":"key=\(AppDelegate.ServerKey)"]
+        let notification = ["to":"\(toDeviceId)","notification":["body":body,"title":title,"badge":1,"sound":"default"]] as [String : Any]
+        
+        Alamofire.request(AppDelegate.Notification_URL as URLConvertible, method: .post as HTTPMethod, parameters: notification, encoding: JSONEncoding.default, headers: header).responseJSON { (response) in
+            print(response)
         }
     }
     
@@ -826,83 +847,140 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }
    
 }
-extension ChatLogController : UITextViewDelegate {
-////
-//    func textViewDidChange(_ textView: UITextView) {
-////        if textView.contentSize.height > textView.frame.size.height {
-////
-////            let fixedWidth = textView.frame.size.width
-////            textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-////
-////            var newFrame = textView.frame
-////            let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-////
-////
-////            newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
-////
-////            textView.frame = newFrame;
-////
-////
-////
-////        }
-////    }
-//
-//
-//    print("text view did change\n")
-//    let textViewFixedWidth: CGFloat = textView.frame.size.width
-//    let newSize = textView.sizeThatFits(CGSize(width: textViewFixedWidth, height: CGFloat.greatestFiniteMagnitude))
-//    var newFrame: CGRect = textView.frame
-//    //
-//    var textViewYPosition = textView.frame.origin.y
-//    var heightDifference = textView.frame.height - newSize.height
-//    //
-//    if (abs(heightDifference) > 5) {
-//    newFrame.size = CGSize(width: max(newSize.width, textViewFixedWidth), height: newSize.height)
-//    newFrame.offsetBy(dx: 0.0, dy: heightDifference)
-//    //
-////    updateParentView(heightDifference: heightDifference)
+var audioRecorder : AVAudioRecorder!
+var audioPlayer : AVAudioPlayer!
+var recordingSession: AVAudioSession!
+var settings         = [String : Int]()
+
+var fileName = "audio_file.m4a"
+extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate{
+
+    func startAudioSession(){
+        recordingSession = AVAudioSession.sharedInstance()
+        
+        do {
+            try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
+            try recordingSession.setActive(true)
+            recordingSession.requestRecordPermission() { [unowned self] allowed in
+                DispatchQueue.main.async {
+                    if allowed {
+                        //                        self.setupRecorder()
+                    } else {
+                        // failed to record!
+                    }
+                }
+            }
+        } catch {
+            // failed to record!
+        }
+    }
+    
+    func setupRecorder(){
+        recordingSession = AVAudioSession.sharedInstance()
+        do {
+            try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
+            try recordingSession.setActive(true)
+            recordingSession.requestRecordPermission() { [unowned self] allowed in
+                DispatchQueue.main.async {
+                    if allowed {
+                        print("Allow")
+                    } else {
+                        print("Dont Allow")
+                    }
+                }
+            }
+        } catch {
+            print("failed to record!")
+        }
+        
+        // Audio Settings
+        
+        settings = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 12000,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
+        
+    }
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let documentsDirectory = paths[0]
+        return documentsDirectory
+    }
+    
+    func getAudiFileURL() -> URL {
+        
+        return getDocumentsDirectory().appendingPathComponent(".m4a")
+    }
+    
+    func startRecording() {
+        setupRecorder()
+        let settings = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 12000,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.low.rawValue
+        ]
+        
+        do {
+            let audioFileUrl = getAudiFileURL()
+            print(audioFileUrl)
+            audioRecorder = try AVAudioRecorder(url: audioFileUrl, settings: settings)
+            audioRecorder.delegate = self
+            audioRecorder.record()
+            //            blackView.isHidden = false
+        } catch {
+            finishRecording(success: false)
+        }
+    }
+    func finishRecording(success: Bool) {
+
+        if success {
+            audioRecorder.stop()
+             let audioFileUrl = getAudiFileURL()
+            handleAudioSendWith(url: audioFileUrl)
+        } else {
+            audioRecorder = nil
+            print("Somthing Wrong.")
+        }
+    }
+    
+    func handleAudioSendWith(url: URL) {
+//        guard let fileUrl = URL(string: url) else {
+//            return
+//        }
+        let fileName = NSUUID().uuidString + ".m4a"
+        
+        let ref = Storage.storage().reference().child("message_voice").child(fileName)
+        ref.putFile(from: url, metadata: nil) { (metadata, error) in
+            if error != nil {
+                print(error ?? "error")
+            }
+            ref.downloadURL(completion: { (url, error) in
+                if error != nil {
+                    print("Error",error)
+                }
+                let downloadUrl = url?.absoluteString
+                let values: [String : Any] = ["audioUrl": downloadUrl]
+                self.sendMessageWithProperties(properties: values as [String : AnyObject])
+            })
+            }
+        }
+//    func handleAudioPLay() {
+//        if let audioUrl = message?.audioUrl, let url = URL(string: audioUrl) {
+//            do {
+//                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord)
+//                audioPlayer = try AVAudioPlayer(contentsOf: url)
+//                audioPlayer?.delegate = self
+//                audioPlayer?.prepareToPlay()
+//                audioPlayer?.play()
+//                print("Audio ready to play")
+//            } catch let error {
+//                print(error.localizedDescription)
+//            }
+//        }
 //    }
-//    textView.frame = newFrame
-//}
-//    func updateParentView(heightDifference: CGFloat) {
-////        //
-////        var newContainerViewFrame: CGRect = inputContainerView.frame
-////        //
-////        let containerViewHeight = inputContainerView.frame.size.height
-////        print("container view height: \(containerViewHeight)\n")
-////        //
-////        let newContainerViewHeight = containerViewHeight + heightDifference
-////        print("new container view height: \(newContainerViewHeight)\n")
-////        //
-////        let containerViewHeightDifference = containerViewHeight - newContainerViewHeight
-////        print("container view height difference: \(containerViewHeightDifference)\n")
-////        //
-//////        newContainerViewFrame.size = CGSizeMake(inputContainerView.frame.size.width, newContainerViewHeight)
-////        newContainerViewFrame.size = CGSize(width: inputContainerView.frame.size.width, height: newContainerViewHeight)
-////        //
-//////        newContainerViewFrame.origin.y - containerViewHeightDifference
-////        //
-////        inputContainerView.frame = newContainerViewFrame
-//
-//
-//            //
-//            var newContainerViewFrame: CGRect = inputContainerView.frame
-//            //
-//            var containerViewHeight = inputContainerView.frame.size.height
-//            print("container view height: \(containerViewHeight)\n")
-//            //
-//            var newContainerViewHeight = containerViewHeight + heightDifference
-//            print("new container view height: \(newContainerViewHeight)\n")
-//            //
-//            var containerViewHeightDifference = containerViewHeight - newContainerViewHeight
-//            print("container view height difference: \(containerViewHeightDifference)\n")
-//            //
-//        newContainerViewFrame.size = CGSize(width: inputContainerView.frame.size.width, height: newContainerViewHeight)
-////         newContainerViewFrame.origin.y - containerViewHeightDifference
-//            //
-//            newContainerViewFrame.offsetBy(dx: 0.0, dy: containerViewHeightDifference)
-//            //
-//             inputContainerView.frame = newContainerViewFrame
-//
-//    }
-}
+    }
+

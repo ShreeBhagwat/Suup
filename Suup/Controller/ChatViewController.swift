@@ -370,6 +370,16 @@
 //        }
 //    }
 //
+//func updateSearchResults(for searchController: UISearchController) {
+//    filterArray = users.filter({ (users: AnyObject) -> Bool in
+//        if users.contains(searchController.searchBar.text!) {
+//            return true
+//        } else {
+//            return false
+//        }
+//    })
+//    resultController.tableView.reloadData()
+//}
 
 //
 

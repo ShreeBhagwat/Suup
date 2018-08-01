@@ -61,9 +61,6 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
                     }
                     let profilePicUrl = url?.absoluteString
                     print("Profile Image successfully uploaded into storage with url: \(profilePicUrl ?? "" )")
-                    
-                    
-                    
                     let values = ["userName": self.NameText.text!,"phoneNumber":Auth.auth().currentUser?.phoneNumber,"userId":Auth.auth().currentUser?.uid,"profileImageUrl": profilePicUrl]
                     
                     self.registerUserIntoDatabaseWithUid(uid: uid!, values: values as [String : AnyObject])

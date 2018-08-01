@@ -10,42 +10,103 @@ import Foundation
 import AVFoundation
 class AudioRecord : NSObject,AVAudioRecorderDelegate,AVAudioPlayerDelegate {
     
-    var soundRecorder : AVAudioRecorder!
-    var soundPlayer : AVAudioPlayer!
-    var fileName = "audioFile.m4a"
+    var audioRecorder : AVAudioRecorder!
+    var audioPlayer : AVAudioPlayer!
+    var recordingSession: AVAudioSession!
+    var settings         = [String : Int]()
+    
+    var fileName = "audio_file.m4a"
+    
+
+    
+    func startAudioSession(){
+        recordingSession = AVAudioSession.sharedInstance()
+        
+        do {
+            try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
+            try recordingSession.setActive(true)
+            recordingSession.requestRecordPermission() { [unowned self] allowed in
+                DispatchQueue.main.async {
+                    if allowed {
+//                        self.setupRecorder()
+                    } else {
+                        // failed to record!
+                    }
+                }
+            }
+        } catch {
+            // failed to record!
+        }
+    }
     
     func setupRecorder(){
-        let recordSettings = [ AVFormatIDKey : kAudioFormatAppleLossless,
-                               AVEncoderAudioQualityKey : AVAudioQuality.max.rawValue,
-                               AVEncoderBitRateKey: 320000,
-                               AVNumberOfChannelsKey : 2,
-                               AVSampleRateKey : 44100.0 ] as [String : Any]
+        recordingSession = AVAudioSession.sharedInstance()
+        do {
+            try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
+            try recordingSession.setActive(true)
+            recordingSession.requestRecordPermission() { [unowned self] allowed in
+                DispatchQueue.main.async {
+                    if allowed {
+                        print("Allow")
+                    } else {
+                        print("Dont Allow")
+                    }
+                }
+            }
+        } catch {
+            print("failed to record!")
+        }
         
-        let docDirURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let fileURL = docDirURL.appendingPathComponent(fileName)
+        // Audio Settings
         
-            soundRecorder = try! AVAudioRecorder.init(url: fileURL, settings: recordSettings)
-            soundRecorder.delegate = self
-            soundRecorder.isMeteringEnabled = true
-            soundRecorder.prepareToRecord()
+        settings = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 12000,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
+        
     }
 
-    func startRec(){
-soundRecorder.record()
-}
-    func stopRec(){
-        soundRecorder.stop()
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let documentsDirectory = paths[0]
+        return documentsDirectory
+    }
+    
+    func getAudiFileURL() -> URL {
+        return getDocumentsDirectory().appendingPathComponent("sound.m4a")
+    }
+    
+    func startRecording() {
+        setupRecorder()
+        let settings = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 12000,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.low.rawValue
+        ]
+        
         do {
-        var audioSession = try AVAudioSession.sharedInstance().setActive(false)
-        }catch {
-            print("error")
-        }
-}
-    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        if flag {
-            
-        }else {
-            print("error")
+            let audioFileUrl = getAudiFileURL()
+            print(audioFileUrl)
+            audioRecorder = try AVAudioRecorder(url: audioFileUrl, settings: settings)
+            audioRecorder.delegate = self
+            audioRecorder.record()
+//            blackView.isHidden = false
+        } catch {
+            finishRecording(success: false)
         }
     }
-}
+    func finishRecording(success: Bool) {
+//        audioRecorder.stop()
+        if success {
+            audioRecorder.stop()
+        } else {
+            audioRecorder = nil
+            print("Somthing Wrong.")
+        }
+    }
+
+    }
+

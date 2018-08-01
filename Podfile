@@ -13,6 +13,7 @@ pod 'Firebase/Storage'
 pod 'SVProgressHUD'
 pod 'ChameleonFramework'
 pod 'FirebaseMessaging'
+pod 'Alamofire', '~> 4.7'
 
 
 end
