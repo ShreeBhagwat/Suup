@@ -367,7 +367,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         dismiss(animated: true, completion: nil)
     }
-    
+    var avPlayer:AVPlayer!
     private func handelVideoSelectedForUrl(url: NSURL){
         let filename = NSUUID().uuidString + ".mov"
         let storageRef = Storage.storage().reference()
@@ -552,6 +552,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         cell.chatLogController = self
         let message = messages[indexPath.item]
+        cell.message = message
         cell.textView.text = message.text
         
         let seconds = message.timeStamp?.doubleValue
@@ -570,9 +571,11 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             cell.bubbleWidthAnchor?.constant = 200
             cell.textView.isHidden = true
         }
+        cell.playButton.isHidden = message.videoStorageUrl == nil
+        
         return cell
     }
-    
+
     private func setupCell(cell:ChatMessageCell, message: Message){
         if let profileImageUrl = self.user?.profileImageUrl {
             cell.profileImageView.loadImageFromCache(urlString: profileImageUrl)

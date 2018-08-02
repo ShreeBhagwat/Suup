@@ -51,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MessagingDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
         connectToFCM()
         let uid = Auth.auth().currentUser?.uid
-        UsersPresence().userOnline(UserId: uid!)
+//        UsersPresence().userOnline(UserId: uid!)
     }
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
        let newToken =  InstanceID.instanceID().instanceID { (result, error) in

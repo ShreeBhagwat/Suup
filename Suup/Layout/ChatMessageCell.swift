@@ -9,20 +9,61 @@
 import UIKit
 import ChameleonFramework
 import Firebase
+import AVFoundation
+import AVKit
 class ChatMessageCell: UICollectionViewCell {
     
     var chatLogController: ChatLogController?
+    
     var message: Message?{
         didSet{
-    if let seconds = message?.timeStamp?.doubleValue {
-        let timeStampDate = NSDate(timeIntervalSince1970: seconds)
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "hh:mm: a"
-        messageTimeStamp.text = dateFormatter.string(from: timeStampDate as Date)
+            if let seconds = message?.timeStamp?.doubleValue {
+                let timeStampDate = NSDate(timeIntervalSince1970: seconds)
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "hh:mm: a"
+                messageTimeStamp.text = dateFormatter.string(from: timeStampDate as Date)
+            }
         }
     }
+    
+    lazy var playButton : UIButton = {
+       let button = UIButton(type: .system)
+        let image = UIImage(named: "play1")
+        button.setImage(image, for: .normal)
+        button.tintColor = UIColor.white
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(handleVideoPlay), for: .touchUpInside)
+        return button
+    }()
+    
+    let avPlayerViewController = AVPlayerViewController()
+    var playerLayer: AVPlayerLayer?
+    var player:AVPlayer?
+    
+    @objc func handleVideoPlay() {
+        if let videoUrl = message?.videoStorageUrl, let url = URL(string: videoUrl){
+            player = AVPlayer(url: url)
+            avPlayerViewController.player = player
+            
+            print("print video")
+//            playerLayer = AVPlayerLayer(player: player)
+//            playerLayer?.frame = bubbleView.bounds
+//            bubbleView.layer.addSublayer(playerLayer!)
+//            player?.play()
+            chatLogController?.present(avPlayerViewController, animated: true, completion: {
+                self.avPlayerViewController.player?.play()
+            })
+            
+        }
+     
 }
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        playerLayer?.removeFromSuperlayer()
+        player?.pause()
+    }
+    
     let textView: UITextView = {
         let tv = UITextView()
         tv.text = "Sample Text For Now"
@@ -120,6 +161,14 @@ class ChatMessageCell: UICollectionViewCell {
         messageImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
         messageImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
         messageImageView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true
+        
+        //Play Button
+        bubbleView.addSubview(playButton)
+        //IOS 9 Constraints: x, y , width, height
+        playButton.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor).isActive = true
+        playButton.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
+        playButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        playButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         //IOS 9 Constraints: x, y , width, height
         profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
