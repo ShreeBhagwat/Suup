@@ -153,12 +153,12 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         collectionView?.backgroundColor = UIColor.clear
         collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.keyboardDismissMode = .interactive
-//        collectionView?.autoresizingMask = [.flexibleHeight]
-        
-        
-        //
+
         setUpKeyboardObservers()
  
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        timeLable.isHidden = true
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -167,7 +167,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let lengthToReplace = range.length
         let newLength = startinglength + lengthToAdd - lengthToReplace
         if newLength == 0 {
-           
+            
+            self.recordAudioButton.tintColor = UIColor.white
             self.recordAudioButton.setImage(#imageLiteral(resourceName: "ic_voice"), for: .normal)
             self.recordAudioButton.addTarget(self, action: #selector(recordAudioButtonPressed), for: .touchDown)
             self.recordAudioButton.addTarget(self, action: #selector(recordAudioButtonNotPressed), for: .touchUpInside)
@@ -188,6 +189,21 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         }
         return true
     }
+    let timeLable: UITextView = {
+        let timeLable = UITextView()
+        timeLable.backgroundColor = UIColor.white
+        timeLable.textAlignment = .center
+        timeLable.layer.cornerRadius = 10
+        timeLable.text = "00:00:00"
+        timeLable.font = UIFont.systemFont(ofSize: 16)
+        timeLable.translatesAutoresizingMaskIntoConstraints = false
+        timeLable.isEditable = false
+        timeLable.textColor = UIColor.red
+        
+        return timeLable
+    }()
+    
+    
 
     let sendbutton = UIButton(type: .custom)
     let recordAudioButton = UIButton(type: .custom)
@@ -234,11 +250,24 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         recordAudioButton.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(recordAudioButton)
+        recordAudioButton.layer.cornerRadius = 20
+        recordAudioButton.layer.borderWidth = 1
+        recordAudioButton.layer.borderColor = UIColor.black.cgColor
         // Constraints x,y,width,height
-        recordAudioButton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+//        recordAudioButton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+        recordAudioButton.leftAnchor.constraint(equalTo: inputTextFiled.rightAnchor, constant: 4).isActive = true
         recordAudioButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        recordAudioButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        recordAudioButton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
+//        recordAudioButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
+        recordAudioButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        recordAudioButton.heightAnchor.constraint(equalTo: containerView.heightAnchor, constant: -10).isActive = true
+        
+        containerView.addSubview(timeLable)
+        //Constraints of time lable
+        timeLable.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -8).isActive = true
+//        timeLable.centerYAnchor.constraint(equalTo: recordAudioButton.centerYAnchor).isActive = true
+        timeLable.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        timeLable.bottomAnchor.constraint(equalTo: containerView.topAnchor, constant: -5).isActive = true
+        timeLable.heightAnchor.constraint(equalToConstant: 25).isActive = true
         
         containerView.addSubview(inputTextFiled)
         
@@ -273,14 +302,17 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }()
     
     @objc func recordAudioButtonPressed(){
-        print("Audio Record began")
-//       setupRecorder()
+      timeLable.isHidden = false
+      recordAudioButton.backgroundColor = UIColor.red
+      AudioServicesPlayAlertSound(1110)
       startRecording()
 
     }
     @objc func recordAudioButtonNotPressed(){
-            print("stop")
-        finishRecording(success: true)
+        timeLable.isHidden = true
+        recordAudioButton.backgroundColor = UIColor.clear
+        AudioServicesPlayAlertSound(1111)
+        finishRecording(success: false)
     }
     //Attachment Button
     @objc func attachmentButton(){
@@ -367,7 +399,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         dismiss(animated: true, completion: nil)
     }
-    var avPlayer:AVPlayer!
+   
     private func handelVideoSelectedForUrl(url: NSURL){
         let filename = NSUUID().uuidString + ".mov"
         let storageRef = Storage.storage().reference()
@@ -571,7 +603,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             cell.bubbleWidthAnchor?.constant = 200
             cell.textView.isHidden = true
         }
-        cell.playButton.isHidden = message.videoStorageUrl == nil
+        cell.playVideoButton.isHidden = message.videoStorageUrl == nil
         
         return cell
     }
@@ -928,6 +960,7 @@ extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudio
         ]
         
         do {
+            
             let audioFileUrl = getAudiFileURL()
             print(audioFileUrl)
             audioRecorder = try AVAudioRecorder(url: audioFileUrl, settings: settings)
@@ -941,7 +974,9 @@ extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudio
     func finishRecording(success: Bool) {
 
         if success {
+            
             audioRecorder.stop()
+            
              let audioFileUrl = getAudiFileURL()
             handleAudioSendWith(url: audioFileUrl)
         } else {

@@ -27,7 +27,7 @@ class ChatMessageCell: UICollectionViewCell {
         }
     }
     
-    lazy var playButton : UIButton = {
+    lazy var playVideoButton : UIButton = {
        let button = UIButton(type: .system)
         let image = UIImage(named: "play1")
         button.setImage(image, for: .normal)
@@ -45,15 +45,11 @@ class ChatMessageCell: UICollectionViewCell {
         if let videoUrl = message?.videoStorageUrl, let url = URL(string: videoUrl){
             player = AVPlayer(url: url)
             avPlayerViewController.player = player
-            
-            print("print video")
-//            playerLayer = AVPlayerLayer(player: player)
-//            playerLayer?.frame = bubbleView.bounds
-//            bubbleView.layer.addSublayer(playerLayer!)
-//            player?.play()
+
             chatLogController?.present(avPlayerViewController, animated: true, completion: {
                 self.avPlayerViewController.player?.play()
             })
+            try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
             
         }
      
@@ -163,12 +159,12 @@ class ChatMessageCell: UICollectionViewCell {
         messageImageView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true
         
         //Play Button
-        bubbleView.addSubview(playButton)
+        bubbleView.addSubview(playVideoButton)
         //IOS 9 Constraints: x, y , width, height
-        playButton.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor).isActive = true
-        playButton.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
-        playButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        playButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        playVideoButton.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor).isActive = true
+        playVideoButton.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
+        playVideoButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        playVideoButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         //IOS 9 Constraints: x, y , width, height
         profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
