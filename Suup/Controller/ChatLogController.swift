@@ -17,6 +17,8 @@ import Alamofire
 
 
 class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CNContactPickerDelegate {
+   
+    
     var user: Users? {
         didSet{
             navigationItem.title = user?.userName
@@ -98,8 +100,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
                 
                 // do we need to attempt filtering anymore
                 self.messages.append(Message(dictionary: dictionary))
-                messagesRef.keepSynced(true)
-                userMessageRef.keepSynced(true)
+//                messagesRef.keepSynced(true)
+//                userMessageRef.keepSynced(true)
                 DispatchQueue.main.async {
                     self.collectionView?.reloadData()
                     let indexPath = NSIndexPath(item: self.messages.count - 1, section: 0)
@@ -147,18 +149,28 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         self.view.backgroundColor = UIColor(patternImage: UIImage(named: "background")!)
        startAudioSession()
        setupRecorder()
-        collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
-        //        collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
+        collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 50, right: 0)
         collectionView?.alwaysBounceVertical = true
         collectionView?.backgroundColor = UIColor.clear
         collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.keyboardDismissMode = .interactive
-
         setUpKeyboardObservers()
- 
+        
+        audioSlider.isHidden = true
+        audioPlayButton.isHidden = true
+        slideToCancel.isHidden = true
+        deleteAudioButton.isHidden = true
+        upButton.isHidden = true
+        collectionView?.reloadData()
     }
     override func viewWillAppear(_ animated: Bool) {
         timeLable.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self)
+        removeNotificationObservers()
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -191,7 +203,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }
     let timeLable: UITextView = {
         let timeLable = UITextView()
-        timeLable.backgroundColor = UIColor.white
+        timeLable.backgroundColor = UIColor.clear
         timeLable.textAlignment = .center
         timeLable.layer.cornerRadius = 10
         timeLable.text = "00:00:00"
@@ -202,19 +214,67 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         return timeLable
     }()
+    let slideToCancel : UITextView = {
+        let slideToCancel = UITextView()
+        slideToCancel.backgroundColor = UIColor.clear
+        slideToCancel.textAlignment = .center
+        slideToCancel.layer.cornerRadius = 10
+        slideToCancel.text = "<<< Slide To Cancel <<< "
+        slideToCancel.font = UIFont.systemFont(ofSize: 17)
+        slideToCancel.translatesAutoresizingMaskIntoConstraints = false
+        slideToCancel.isEditable = false
+        slideToCancel.textColor = UIColor.black
+        return slideToCancel
+    }()
     
+    let audioSlider : UISlider = {
+        let audioSlider = UISlider(frame:CGRect(x: 0, y: 0, width: 300, height: 20))
+         audioSlider.translatesAutoresizingMaskIntoConstraints = false
+        audioSlider.minimumValue = 0
+        audioSlider.maximumValue = 100
+        audioSlider.isContinuous = true
+        
+        
+        return audioSlider
+    }()
     
-
+    lazy var audioPlayButton : UIButton = {
+        let audioPlayButton = UIButton(type: .system)
+        audioPlayButton.setImage(#imageLiteral(resourceName: "play1"), for: .normal)
+        audioPlayButton.isSelected = false
+        audioPlayButton.addTarget(self, action: #selector(toggelPlaybutton), for: .touchUpInside)
+        audioPlayButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        return audioPlayButton
+    }()
+    
+    let deleteAudioButton : UIButton = {
+       let deleteAudioButton = UIButton(type: .custom)
+        deleteAudioButton.setImage(#imageLiteral(resourceName: "delet"), for: .normal)
+        deleteAudioButton.translatesAutoresizingMaskIntoConstraints = false
+        deleteAudioButton.addTarget(self, action: #selector(deleteAudioButtonPressed), for: .touchDown)
+        return deleteAudioButton
+    }()
+    
+    let upButton : UIButton = {
+        let upButton = UIButton(type: .custom)
+        upButton.setImage(#imageLiteral(resourceName: "up"), for: .normal)
+        upButton.translatesAutoresizingMaskIntoConstraints = false
+        upButton.addTarget(self, action: #selector(upButtonPressed), for: .touchDown)
+        return upButton
+    }()
+    
     let sendbutton = UIButton(type: .custom)
     let recordAudioButton = UIButton(type: .custom)
-    
+    let uploadImageView = UIImageView()
+
     lazy var inputContainerView:UIView = {
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height:50)
         containerView.backgroundColor = UIColor(hexString: "#fbfbfb")
         
-        let uploadImageView = UIImageView()
+        
         uploadImageView.isUserInteractionEnabled = true
         uploadImageView.image = UIImage(named: "attachment")
         uploadImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -263,20 +323,58 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         containerView.addSubview(timeLable)
         //Constraints of time lable
-        timeLable.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -8).isActive = true
-//        timeLable.centerYAnchor.constraint(equalTo: recordAudioButton.centerYAnchor).isActive = true
+//        timeLable.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -8).isActive = true
+////        timeLable.centerYAnchor.constraint(equalTo: recordAudioButton.centerYAnchor).isActive = true
+//        timeLable.widthAnchor.constraint(equalToConstant: 80).isActive = true
+//        timeLable.bottomAnchor.constraint(equalTo: containerView.topAnchor, constant: -5).isActive = true
+//        timeLable.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        
+        timeLable.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 8).isActive = true
+        timeLable.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         timeLable.widthAnchor.constraint(equalToConstant: 80).isActive = true
-        timeLable.bottomAnchor.constraint(equalTo: containerView.topAnchor, constant: -5).isActive = true
         timeLable.heightAnchor.constraint(equalToConstant: 25).isActive = true
         
-        containerView.addSubview(inputTextFiled)
+
+         containerView.addSubview(slideToCancel)
+        slideToCancel.rightAnchor.constraint(equalTo: recordAudioButton.leftAnchor, constant: -10).isActive = true
+        slideToCancel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        slideToCancel.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        slideToCancel.widthAnchor.constraint(equalToConstant: 300).isActive = true
         
+
+        containerView.addSubview(inputTextFiled)
         //Constraints x,y,width,height
 
         inputTextFiled.leftAnchor.constraint(equalTo: uploadImageView.rightAnchor, constant:8).isActive = true
         inputTextFiled.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         inputTextFiled.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -50).isActive = true
         inputTextFiled.heightAnchor.constraint(equalTo: containerView.heightAnchor,constant: -15).isActive = true
+        
+        containerView.addSubview(audioPlayButton)
+        audioPlayButton.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 8).isActive = true
+        audioPlayButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        audioPlayButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        audioPlayButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
+        containerView.addSubview(deleteAudioButton)
+        deleteAudioButton.leftAnchor.constraint(equalTo:audioPlayButton.rightAnchor, constant: 8).isActive = true
+        deleteAudioButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        deleteAudioButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        deleteAudioButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
+        containerView.addSubview(upButton)
+        upButton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+        upButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        upButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        upButton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
+        
+        
+        containerView.addSubview(audioSlider)
+        audioSlider.leftAnchor.constraint(equalTo: deleteAudioButton.rightAnchor, constant: 8 ).isActive = true
+        audioSlider.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        audioSlider.rightAnchor.constraint(equalTo: upButton.leftAnchor, constant: -10).isActive = true
+        audioSlider.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
+        
         
         
 //        containerView.addSubview(inputTextView)
@@ -300,9 +398,32 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
 
         return containerView
     }()
-    
+    @objc func toggelPlaybutton(sender: UIButton){
+        sender.isSelected = !sender.isSelected
+        
+        if sender.isSelected {
+            
+            print(sender.isSelected)
+            audioPlayButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+//            let url = getAudiFileURL()
+            playRecordedAudio()
+            
+        }
+            
+        else {
+            
+            print(sender.isSelected)
+            audioPlayButton.setImage(#imageLiteral(resourceName: "play1"), for: .normal)
+        }
+    }
     @objc func recordAudioButtonPressed(){
+        inputTextFiled.isHidden = true
+        uploadImageView.isHidden = true
+//        audioSlider.isHidden = false
+//        audioPlayButton.isHidden = false
+        slideToCancel.isHidden = false
       timeLable.isHidden = false
+      startTimer()
       recordAudioButton.backgroundColor = UIColor.red
       AudioServicesPlayAlertSound(1110)
       startRecording()
@@ -310,9 +431,44 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }
     @objc func recordAudioButtonNotPressed(){
         timeLable.isHidden = true
+        resetTimer()
         recordAudioButton.backgroundColor = UIColor.clear
         AudioServicesPlayAlertSound(1111)
-        finishRecording(success: false)
+        audioSlider.isHidden = false
+        audioPlayButton.isHidden = false
+        slideToCancel.isHidden = true
+        recordAudioButton.isHidden = true
+        upButton.isHidden = false
+        deleteAudioButton.isHidden = false
+        finishRecording(success: true)
+        
+        
+    }
+    
+    @objc func deleteAudioButtonPressed(){
+        audioSlider.isHidden = true
+        audioPlayButton.isHidden = true
+        slideToCancel.isHidden = true
+        upButton.isHidden = true
+        deleteAudioButton.isHidden = true
+        inputTextFiled.isHidden = false
+        uploadImageView.isHidden = false
+        recordAudioButton.isHidden = false
+//        finishRecording(success: false)
+        deleteAudioRecorded()
+    }
+    
+    @objc func upButtonPressed(){
+        audioSlider.isHidden = true
+        audioPlayButton.isHidden = true
+        slideToCancel.isHidden = true
+        upButton.isHidden = true
+        deleteAudioButton.isHidden = true
+        inputTextFiled.isHidden = false
+        uploadImageView.isHidden = false
+        recordAudioButton.isHidden = false
+        finishRecording(success: true)
+        
     }
     //Attachment Button
     @objc func attachmentButton(){
@@ -524,23 +680,34 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         return true
     }
     
+    
+    
+    
     func setUpKeyboardObservers(){
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear(notification:)), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(keyboardWillDisappear(notification:)), name: .UIKeyboardWillHide, object: nil)
+    }
+    func removeNotificationObservers() {
+        print("Keyboard Notification Removed")
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
     }
     
     @objc func keyboardWillShow(){
+        print("Keyboard shown")
         if  messages.count > 0 {
             let indexPath = NSIndexPath(item: messages.count - 1, section: 0)
-            collectionView?.scrollToItem(at: indexPath as IndexPath, at: .top, animated: true)
+            collectionView?.scrollToItem(at: indexPath as IndexPath, at: .bottom, animated: true)
         }
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self)
-    }
+
     
     @objc func keyboardWillAppear(notification: NSNotification?) {
+        if  messages.count > 0 {
+            let indexPath = NSIndexPath(item: messages.count - 1, section: 0)
+            collectionView?.scrollToItem(at: indexPath as IndexPath, at: .bottom, animated: true)
+        }
         guard let keyboardFrame = notification?.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue else {
             return
         }
@@ -552,14 +719,16 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
             keyboardHeight = keyboardFrame.cgRectValue.height
         }
         containerViewBottomAnchor?.constant = -keyboardHeight
+       
+        
         let keyboardSize = keyboardHeight
         let contentInsets: UIEdgeInsets
         if UIInterfaceOrientationIsPortrait(UIApplication.shared.statusBarOrientation) {
             
-            contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize, 0.0);
+            collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: keyboardSize, right: 0)
         }
         else {
-            contentInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize, 0.0);
+            collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 50, right: 0)
         }
         let keyboardDuration = notification?.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as! Double
         UIView.animate(withDuration: keyboardDuration) {
@@ -572,8 +741,10 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         UIView.animate(withDuration: keyboardDuration) {
             self.view.layoutIfNeeded()
             self.containerViewBottomAnchor?.constant = 0
+            self.collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 50, right: 0)
         }
     }
+
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return messages.count
@@ -885,9 +1056,19 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
 var audioRecorder : AVAudioRecorder!
 var audioPlayer : AVAudioPlayer!
 var recordingSession: AVAudioSession!
-var settings         = [String : Int]()
+var settings   = [String : Any]()
+//var fileName = "audio_file.m4a"
+var fileName = NSUUID().uuidString + ".m4a"
+var toggleState = 1
 
-var fileName = "audio_file.m4a"
+
+var seconds = 0
+var secondsFraction = 0
+var timer = Timer()
+
+var isTimerRunning = false
+var resumeTapped = false
+
 extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate{
 
     func startAudioSession(){
@@ -899,7 +1080,7 @@ extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudio
             recordingSession.requestRecordPermission() { [unowned self] allowed in
                 DispatchQueue.main.async {
                     if allowed {
-                        //                        self.setupRecorder()
+                        self.setupRecorder()
                     } else {
                         // failed to record!
                     }
@@ -930,11 +1111,18 @@ extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudio
         
         // Audio Settings
         
+//        settings = [
+//            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+//            AVSampleRateKey: 12000,
+//            AVNumberOfChannelsKey: 1,
+//            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+//        ]
         settings = [
-            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVSampleRateKey: 12000,
-            AVNumberOfChannelsKey: 1,
-            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        AVFormatIDKey: kAudioFormatAppleLossless,
+        AVEncoderAudioQualityKey: AVAudioQuality.max.rawValue,
+        AVEncoderBitRateKey: 32000,
+        AVNumberOfChannelsKey: 2,
+        AVSampleRateKey: 44100.0
         ]
         
     }
@@ -946,50 +1134,95 @@ extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudio
     }
     
     func getAudiFileURL() -> URL {
-        
-        return getDocumentsDirectory().appendingPathComponent(".m4a")
+//        let fileName = NSUUID().uuidString + ".mp4"
+//        let filename = "soundRec.mp4"
+    
+        return getDocumentsDirectory().appendingPathComponent(fileName)
     }
     
     func startRecording() {
         setupRecorder()
-        let settings = [
-            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVSampleRateKey: 12000,
-            AVNumberOfChannelsKey: 1,
-            AVEncoderAudioQualityKey: AVAudioQuality.low.rawValue
-        ]
-        
+
         do {
             
             let audioFileUrl = getAudiFileURL()
             print(audioFileUrl)
-            audioRecorder = try AVAudioRecorder(url: audioFileUrl, settings: settings)
+           try audioRecorder =  AVAudioRecorder(url: audioFileUrl, settings: settings)
+            print(audioFileUrl)
             audioRecorder.delegate = self
             audioRecorder.record()
-            //            blackView.isHidden = false
+
         } catch {
             finishRecording(success: false)
         }
     }
+    
     func finishRecording(success: Bool) {
 
         if success {
             
             audioRecorder.stop()
             
-             let audioFileUrl = getAudiFileURL()
-            handleAudioSendWith(url: audioFileUrl)
+//             let audioFileUrl = getAudiFileURL()
+//            handleAudioSendWith(url: audioFileUrl)
         } else {
             audioRecorder = nil
             print("Somthing Wrong.")
         }
     }
     
+    func playRecordedAudio(){
+        let url = getAudiFileURL()
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord)
+                            audioPlayer = try AVAudioPlayer(contentsOf: url)
+                            audioPlayer.volume = 1.0
+                            audioPlayer?.delegate = self
+                            audioPlayer?.prepareToPlay()
+                            audioPlayer?.play()
+//            audioPlayer.play()
+            print("audio playing")
+        } catch {
+            print("not nhplayi")
+        }
+//        audioSlider.maximumValue = Float(audioPlayer.duration)
+        
+//        updateAudioTimer()
+        
+    }
+    func pauseRecordedAudio(){
+        audioPlayer.pause()
+        updateAudioTimer()
+    }
+    
+    func deleteAudioRecorded(){
+        let url = getAudiFileURL()
+        do {
+       try FileManager.default.removeItem(at: url)
+        } catch {
+            print(error)
+        }
+        
+    }
+    
+    
+    func updateAudioTimer() {
+        var currentTime = Int(audioPlayer.currentTime)
+        var duration = Int(audioPlayer.duration)
+        var total = currentTime - duration
+        var totalString = String(total)
+        
+        var minutes = currentTime/60
+        var seconds = currentTime - minutes / 60
+        
+//        playedTime.text = NSString(format: "%02d:%02d", minutes,seconds) as String
+    }
+    
     func handleAudioSendWith(url: URL) {
 //        guard let fileUrl = URL(string: url) else {
 //            return
 //        }
-        let fileName = NSUUID().uuidString + ".m4a"
+//        let fileName = NSUUID().uuidString + ".m4a"
         
         let ref = Storage.storage().reference().child("message_voice").child(fileName)
         ref.putFile(from: url, metadata: nil) { (metadata, error) in
@@ -1020,5 +1253,55 @@ extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudio
 //            }
 //        }
 //    }
+    
+    ///////////////////////////////////////////////// TIMER
+    
+
+    
+    //MARK: - IBActions
+    
+    func startTimer() {
+        print("timer class")
+        if isTimerRunning == false {
+            runTimer()
+            
+        }
+    }
+    
+    func runTimer() {
+        timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
+        isTimerRunning = true
+        print("time running")
+        
+    }
+    
+    
+    func resetTimer() {
+        timer.invalidate()
+        secondsFraction = 0
+        isTimerRunning = false
+        
+    }
+    
+    
+    @objc func updateTimer() {
+        secondsFraction += 1
+     timeLable.text! = String(format: "%02d:%02d:%02d", (secondsFraction % 36000) / 6000, (secondsFraction % 6000) / 100, (secondsFraction % 3600) % 60 )
+//        timeLable.text = timeString(time: TimeInterval(secondsFraction))
+//        timeLable.text = String(secondsFraction)
+        //            labelButton.setTitle(timeString(time: TimeInterval(seconds)), for: UIControlState.normal)
+        
+    }
+    
+//    func timeString(time:TimeInterval) -> String {
+//        let hours = Int(time) / 3600
+//        let minutes = Int(time) / 60 % 60
+//        let seconds = Int(time) % 60
+//        let secondsFraction = Int(time) / 100
+////        let restTime = ((hours<10) ? "0" : "") + String(hours) + ":" + ((minutes<10) ? "0" : "") + String(minutes) + ":" + ((seconds<10) ? "0" : "") + String(seconds)
+//        return String(format:"%02i:%02i:%02i", hours, minutes, seconds,secondsFraction)
+////        return restTime
+//    }
+    
     }
 

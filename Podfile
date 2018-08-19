@@ -14,6 +14,7 @@ pod 'SVProgressHUD'
 pod 'ChameleonFramework'
 pod 'FirebaseMessaging'
 pod 'Alamofire', '~> 4.7'
+pod 'DCAnimationKit'
 
 
 end

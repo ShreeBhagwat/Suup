@@ -137,10 +137,7 @@ class MessageController: UITableViewController, UINavigationControllerDelegate, 
             }else{
                 
                 if let dictonary = snapshot.value as? [String: AnyObject]{
-//                    dictonary.forEach({ (<#(key: String, value: AnyObject)#>) in
-//                        <#code#>
-//                    })
-//                    print("\(String(describing: snapshot.value))")
+
                     self.navigationItem.title = dictonary["userName"] as? String
 
                     let user = Users()
@@ -161,7 +158,7 @@ class MessageController: UITableViewController, UINavigationControllerDelegate, 
         observeUserMessage()
         let titleView = UILabel()
         titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 500)
-//        titleView.backgroundColor = UIColor.blue
+
         let profileImageView = UIImageView()
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.contentMode = .scaleAspectFit

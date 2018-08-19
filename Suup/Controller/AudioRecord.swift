@@ -15,7 +15,7 @@ class AudioRecord : NSObject,AVAudioRecorderDelegate,AVAudioPlayerDelegate {
     var recordingSession: AVAudioSession!
     var settings         = [String : Int]()
     
-    var fileName = "audio_file.m4a"
+  
     
 
     
