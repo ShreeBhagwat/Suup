@@ -15,6 +15,11 @@ pod 'ChameleonFramework'
 pod 'FirebaseMessaging'
 pod 'Alamofire', '~> 4.7'
 pod 'DCAnimationKit'
+pod 'TransitionButton'
+pod 'Instructions', '~> 1.2.0'
+pod 'MEVHorizontalContacts'
+pod "CTKFlagPhoneNumber"
+pod 'SACodedTextField'
 
 
 end

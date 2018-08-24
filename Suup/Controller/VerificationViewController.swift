@@ -9,16 +9,71 @@
 import UIKit
 import FirebaseAuth
 import SVProgressHUD
+import ChameleonFramework
+import CTKFlagPhoneNumber
+import TransitionButton
+import SACodedTextField
 
 class VerificationViewController: UIViewController {
 
     @IBOutlet weak var VerificationCode: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor(hexString: "#71f2da")
+        view.addSubview(verificationTitle)
+        view.addSubview(verificationNote)
+        view.addSubview(verificationTextField)
+        view.addSubview(verificationButton)
+        
+          setupVerificationViewController()
 
         // Do any additional setup after loading the view.
     }
     
+    let verificationTitle: UILabel = {
+        let label = UILabel()
+        label.text = "OTP Verification"
+        label.backgroundColor = UIColor.init(red: (1), green: (1), blue: (1), alpha: 0.3)
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 25
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 20.0)
+        
+        return label
+    }()
+    
+    let verificationNote: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 3
+        label.text = "We have sent a 6 digit Verification Code via SMS. Check your phone and enter the code below"
+        label.font = UIFont.systemFont(ofSize: 16.0)
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = UIColor.clear
+        
+        
+        return label
+    }()
+    
+    let verificationTextField : ActivationCodeTextField = {
+        let textFiled = ActivationCodeTextField()
+        textFiled.maxCodeLength = 6
+        textFiled.font = UIFont.systemFont(ofSize: 20.0)
+        textFiled.translatesAutoresizingMaskIntoConstraints = false
+        return textFiled
+    }()
+    
+    let verificationButton : TransitionButton = {
+        let button = TransitionButton(type: .custom)
+        button.backgroundColor = UIColor.flatSkyBlue()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Send OTP", for: .normal)
+        button.layer.cornerRadius = 20
+//        button.addTarget(self, action: #selector(), for: .touchUpInside)
+        
+        return button
+    }()
     
     
     @IBAction func Verify(_ sender: Any) {
@@ -47,6 +102,32 @@ class VerificationViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
 
+    }
+    func setupVerificationViewController(){
+        verificationTitle.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        verificationTitle.topAnchor.constraint(equalTo: view.topAnchor, constant: 100).isActive = true
+        verificationTitle.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        verificationTitle.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        ////////////////////////////////////////////////////////////////
+        
+        verificationNote.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        verificationNote.topAnchor.constraint(equalTo: verificationTitle.bottomAnchor, constant: 20).isActive = true
+        verificationNote.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        verificationNote.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        
+        //////////////////////////////////////////////////////////////////
+        verificationTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        verificationTextField.topAnchor.constraint(equalTo: verificationNote.bottomAnchor, constant: 10).isActive = true
+        verificationTextField.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        verificationTextField.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        //////////////////////////////////////////////////////////////////
+        verificationButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        verificationButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -300).isActive = true
+        verificationButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        verificationButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
     }
 
 

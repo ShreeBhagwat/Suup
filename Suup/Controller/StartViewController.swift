@@ -9,12 +9,45 @@
 import UIKit
 
 import Firebase
+import ChameleonFramework
+import TransitionButton
 
 class StartViewController: UIViewController {
+    let startButton = TransitionButton()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        startButton.backgroundColor = UIColor.flatSkyBlue()
+        startButton.translatesAutoresizingMaskIntoConstraints = false
+        startButton.setTitle("Start Messaging", for: .normal)
+        startButton.cornerRadius = 20
+        startButton.spinnerColor = UIColor.white
+        self.view.addSubview(startButton)
+        startButton.addTarget(self, action: #selector(startMessaging), for: .touchUpInside)
         
+        // Constaints for button
+        startButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        startButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100).isActive = true
+        startButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        startButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+    }
+    
+   
+    
+    @objc func startMessaging(){
+//        startButton.startAnimation()
+//        let qualityOfServiceClass = DispatchQoS.QoSClass.background
+//        let backgroundQueue = DispatchQueue.global(qos: qualityOfServiceClass)
+//        backgroundQueue.async {
+//            sleep(2)
+//            DispatchQueue.main.async(execute: {
+//                self.startButton.stopAnimation(animationStyle: .expand, completion: {
+                    let secondVC = PhoneAuthViewController()
+                    self.present(secondVC, animated: true, completion: nil)
+              
+//            })
+//        }
     }
     
     
@@ -35,10 +68,7 @@ class StartViewController: UIViewController {
     }
     
     
-    @IBAction func StartButtonPressed(_ sender: UIButton) {
-    print("Please put Number for verification")
-//       
-    }
+
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

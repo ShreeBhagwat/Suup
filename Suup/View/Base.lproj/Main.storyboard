@@ -22,27 +22,6 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SuupFinal" translatesAutoresizingMaskIntoConstraints="NO" id="zUT-3J-2jC">
                                 <rect key="frame" x="0.0" y="64" width="414" height="672"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3LW-Ps-HxY">
-                                <rect key="frame" x="81" y="587" width="252" height="42"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.0" green="0.5568627451" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
-                                <state key="normal">
-                                    <attributedString key="attributedTitle">
-                                        <fragment content="START MESSAGING">
-                                            <attributes>
-                                                <color key="NSColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <font key="NSFont" size="26" name="ArialRoundedMTBold"/>
-                                                <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
-                                            </attributes>
-                                        </fragment>
-                                    </attributedString>
-                                </state>
-                                <connections>
-                                    <action selector="SendButtonPressed:" destination="ffx-em-Urz" eventType="touchUpInside" id="1Qt-Xr-8VG"/>
-                                    <segue destination="ffx-em-Urz" kind="show" identifier="goToPhoneAuth" id="uSF-JL-ZFY"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.78823529410000004" green="1" blue="0.94117647059999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -66,83 +45,7 @@
         <scene sceneID="nO3-jx-ihP">
             <objects>
                 <viewController id="ffx-em-Urz" customClass="PhoneAuthViewController" customModule="Suup" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="mb1-x7-scU">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background_1" translatesAutoresizingMaskIntoConstraints="NO" id="CtP-I6-T50">
-                                <rect key="frame" x="0.0" y="64" width="413" height="672"/>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j95-bp-uav">
-                                <rect key="frame" x="81" y="336" width="251" height="42"/>
-                                <color key="backgroundColor" red="0.0" green="0.5568627451" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal">
-                                    <attributedString key="attributedTitle">
-                                        <fragment content="SEND">
-                                            <attributes>
-                                                <color key="NSColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <font key="NSFont" size="26" name="ArialRoundedMTBold"/>
-                                                <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
-                                            </attributes>
-                                        </fragment>
-                                    </attributedString>
-                                </state>
-                                <connections>
-                                    <action selector="SendButtonPressed:" destination="ffx-em-Urz" eventType="touchUpInside" id="i5O-oZ-BTZ"/>
-                                </connections>
-                            </button>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Phone Number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="B3d-7h-tWf">
-                                <rect key="frame" x="38" y="231" width="338" height="30"/>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" keyboardType="phonePad" smartDashesType="yes" textContentType="tel"/>
-                            </textField>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="SuuP Will send a SMS to Verify your Phone Number. Enter your Country Code and Phone Number" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="u2K-P9-Uk2">
-                                <rect key="frame" x="38" y="122" width="338" height="72"/>
-                                <color key="backgroundColor" red="0.78823529410000004" green="1" blue="0.94117647059999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="72" id="lnJ-vk-ygb"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8kM-e0-ghX">
-                                <rect key="frame" x="88" y="78" width="244" height="26"/>
-                                <attributedString key="attributedText">
-                                    <fragment content="Enter Phone Number">
-                                        <attributes>
-                                            <font key="NSFont" size="14" name="ArialUnicodeMS"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
-                                        </attributes>
-                                    </fragment>
-                                </attributedString>
-                                <color key="highlightedColor" red="0.0" green="0.32852089410000002" blue="0.57488495110000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" red="0.78823529410000004" green="1" blue="0.94117647059999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="B3d-7h-tWf" firstAttribute="top" secondItem="u2K-P9-Uk2" secondAttribute="bottom" constant="37" id="BQJ-00-deY"/>
-                            <constraint firstItem="8kM-e0-ghX" firstAttribute="top" secondItem="Emb-vF-sge" secondAttribute="top" constant="14" id="HvY-lD-1n5"/>
-                            <constraint firstItem="j95-bp-uav" firstAttribute="leading" secondItem="Emb-vF-sge" secondAttribute="leading" constant="81" id="KxH-A4-Sfj"/>
-                            <constraint firstItem="j95-bp-uav" firstAttribute="top" secondItem="B3d-7h-tWf" secondAttribute="bottom" constant="75" id="MSo-a5-c9I"/>
-                            <constraint firstItem="u2K-P9-Uk2" firstAttribute="leading" secondItem="Emb-vF-sge" secondAttribute="leading" constant="38" id="Qnz-mO-eo3"/>
-                            <constraint firstItem="CtP-I6-T50" firstAttribute="bottom" secondItem="Emb-vF-sge" secondAttribute="bottom" id="Uoq-1V-VPP"/>
-                            <constraint firstItem="u2K-P9-Uk2" firstAttribute="centerX" secondItem="CtP-I6-T50" secondAttribute="centerX" id="XDz-eu-Ws6"/>
-                            <constraint firstItem="u2K-P9-Uk2" firstAttribute="top" secondItem="mb1-x7-scU" secondAttribute="top" constant="122" id="fiZ-iQ-ORw"/>
-                            <constraint firstItem="8kM-e0-ghX" firstAttribute="trailing" secondItem="j95-bp-uav" secondAttribute="trailing" id="fyt-LQ-lee"/>
-                            <constraint firstItem="u2K-P9-Uk2" firstAttribute="trailing" secondItem="B3d-7h-tWf" secondAttribute="trailing" id="gIW-U0-rNw"/>
-                            <constraint firstItem="u2K-P9-Uk2" firstAttribute="top" secondItem="8kM-e0-ghX" secondAttribute="bottom" constant="18" id="gk4-j8-7Xw"/>
-                            <constraint firstItem="CtP-I6-T50" firstAttribute="top" secondItem="Emb-vF-sge" secondAttribute="top" id="hNI-b9-wl0"/>
-                            <constraint firstItem="CtP-I6-T50" firstAttribute="leading" secondItem="mb1-x7-scU" secondAttribute="leading" id="iOH-sM-W33"/>
-                            <constraint firstItem="u2K-P9-Uk2" firstAttribute="centerX" secondItem="j95-bp-uav" secondAttribute="centerX" id="qpg-Sl-KSz"/>
-                            <constraint firstItem="u2K-P9-Uk2" firstAttribute="leading" secondItem="B3d-7h-tWf" secondAttribute="leading" id="qwF-lw-9au"/>
-                            <constraint firstItem="u2K-P9-Uk2" firstAttribute="centerX" secondItem="mb1-x7-scU" secondAttribute="centerX" id="rZI-BX-0Vj"/>
-                            <constraint firstItem="8kM-e0-ghX" firstAttribute="leading" secondItem="Emb-vF-sge" secondAttribute="leading" constant="88" id="uVZ-XT-4Wp"/>
-                        </constraints>
-                        <viewLayoutGuide key="safeArea" id="Emb-vF-sge"/>
-                    </view>
                     <connections>
-                        <outlet property="PhoneNumber" destination="B3d-7h-tWf" id="h4C-z7-zFr"/>
                         <segue destination="L0I-Xb-R9G" kind="show" identifier="goToVerification" id="m2T-ck-Dal"/>
                     </connections>
                 </viewController>
@@ -159,7 +62,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pxh-gN-c2I">
-                                <rect key="frame" x="75" y="344" width="252" height="42"/>
+                                <rect key="frame" x="75" y="300" width="252" height="42"/>
                                 <color key="backgroundColor" red="0.0" green="0.5568627451" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <state key="normal">
                                     <attributedString key="attributedTitle">
@@ -177,7 +80,7 @@
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Verification Code" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="zyq-Ao-EJn">
-                                <rect key="frame" x="38" y="229" width="338" height="30"/>
+                                <rect key="frame" x="38" y="185" width="338" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
@@ -187,7 +90,7 @@
                                 </connections>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dFq-iW-MBk">
-                                <rect key="frame" x="105.99999999999999" y="84" width="202.66666666666663" height="21"/>
+                                <rect key="frame" x="105.99999999999999" y="40" width="202.66666666666663" height="21"/>
                                 <attributedString key="attributedText">
                                     <fragment content="Verify Your Phone Number">
                                         <attributes>
@@ -199,7 +102,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="We have sent a Verification Code via SMS. Check your phone and enter the code below." textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Cyb-Zf-qSi">
-                                <rect key="frame" x="71" y="113" width="260" height="81"/>
+                                <rect key="frame" x="71" y="69" width="260" height="81"/>
                                 <color key="backgroundColor" red="0.78823529410000004" green="1" blue="0.94117647059999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -241,14 +144,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loggin Successful !" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TYa-GI-7BZ">
-                                <rect key="frame" x="32" y="222" width="350" height="32"/>
+                                <rect key="frame" x="32" y="178" width="350" height="32"/>
                                 <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="27"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UHW-yK-CQq">
-                                <rect key="frame" x="94" y="347" width="226" height="42"/>
+                                <rect key="frame" x="94" y="303" width="226" height="42"/>
                                 <color key="backgroundColor" red="0.0" green="0.5568627451" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <state key="normal">
                                     <attributedString key="attributedTitle">
@@ -290,7 +193,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Your Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xZb-b2-HXM">
-                                <rect key="frame" x="124" y="213" width="260" height="30"/>
+                                <rect key="frame" x="124" y="169" width="260" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="L9N-JN-zLs"/>
                                 </constraints>
@@ -299,14 +202,14 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profile" translatesAutoresizingMaskIntoConstraints="NO" id="Sef-42-OKc">
-                                <rect key="frame" x="20" y="165" width="85" height="78"/>
+                                <rect key="frame" x="20" y="121" width="85" height="78"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="78" id="AgL-hp-aAE"/>
                                     <constraint firstAttribute="width" constant="85" id="D2s-I6-2Kf"/>
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yeb-R6-iwZ">
-                                <rect key="frame" x="94" y="347" width="226" height="42"/>
+                                <rect key="frame" x="94" y="303" width="226" height="42"/>
                                 <color key="backgroundColor" red="0.0" green="0.5568627451" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="226" id="QXj-kl-txM"/>
@@ -329,7 +232,7 @@
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Enter Below your name and add a profile photo(optional)" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="dls-r1-5eb">
-                                <rect key="frame" x="94" y="83" width="248" height="53"/>
+                                <rect key="frame" x="94" y="39" width="248" height="53"/>
                                 <color key="backgroundColor" red="0.78823529410000004" green="1" blue="0.94117647059999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="53" id="w3B-B4-Zdz"/>
@@ -338,7 +241,7 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fjQ-Yh-ogs">
-                                <rect key="frame" x="24" y="251" width="76" height="26"/>
+                                <rect key="frame" x="24" y="207" width="76" height="26"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="76" id="5V1-xB-DMC"/>
                                     <constraint firstAttribute="height" constant="26" id="Hfl-18-ePU"/>
@@ -415,6 +318,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="dUR-XX-FUF" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="nDc-cw-fyG">
+                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -429,10 +333,9 @@
     </scenes>
     <resources>
         <image name="SuupFinal" width="320" height="568"/>
-        <image name="background_1" width="320" height="568"/>
         <image name="profile" width="150" height="150"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="fKk-Ui-Emo"/>
+        <segue reference="hkn-6e-PLf"/>
     </inferredMetricsTieBreakers>
 </document>

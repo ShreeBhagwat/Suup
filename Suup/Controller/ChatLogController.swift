@@ -157,6 +157,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         setUpKeyboardObservers()
         
         audioSlider.isHidden = true
+        audioPlayTime.isHidden = true
         audioPlayButton.isHidden = true
         slideToCancel.isHidden = true
         deleteAudioButton.isHidden = true
@@ -214,6 +215,20 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         
         return timeLable
     }()
+    
+    let audioPlayTime: UITextView = {
+        let timeLable = UITextView()
+        timeLable.backgroundColor = UIColor.clear
+        timeLable.textAlignment = .center
+        timeLable.layer.cornerRadius = 10
+        timeLable.text = "00:00:00"
+        timeLable.font = UIFont.systemFont(ofSize: 16)
+        timeLable.translatesAutoresizingMaskIntoConstraints = false
+        timeLable.isEditable = false
+        timeLable.textColor = UIColor.red
+        
+        return timeLable
+    }()
     let slideToCancel : UITextView = {
         let slideToCancel = UITextView()
         slideToCancel.backgroundColor = UIColor.clear
@@ -231,7 +246,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let audioSlider = UISlider(frame:CGRect(x: 0, y: 0, width: 300, height: 20))
          audioSlider.translatesAutoresizingMaskIntoConstraints = false
         audioSlider.minimumValue = 0
-        audioSlider.maximumValue = 100
+        audioSlider.maximumValue = 1
+        audioSlider.addTarget(self, action: #selector(changeAudioSliderValue), for: .valueChanged)
         audioSlider.isContinuous = true
         
         
@@ -239,8 +255,9 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }()
     
     lazy var audioPlayButton : UIButton = {
-        let audioPlayButton = UIButton(type: .system)
-        audioPlayButton.setImage(#imageLiteral(resourceName: "play1"), for: .normal)
+        let audioPlayButton = UIButton(type: .custom)
+        audioPlayButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
+        audioPlayButton.tintColor = UIColor.blue
         audioPlayButton.isSelected = false
         audioPlayButton.addTarget(self, action: #selector(toggelPlaybutton), for: .touchUpInside)
         audioPlayButton.translatesAutoresizingMaskIntoConstraints = false
@@ -369,12 +386,20 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         upButton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
         
         
+      
+        
+        
+        containerView.addSubview(audioPlayTime)
+        audioPlayTime.rightAnchor.constraint(equalTo: upButton.leftAnchor, constant: -8).isActive = true
+        audioPlayTime.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        audioPlayTime.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        audioPlayTime.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        
         containerView.addSubview(audioSlider)
         audioSlider.leftAnchor.constraint(equalTo: deleteAudioButton.rightAnchor, constant: 8 ).isActive = true
         audioSlider.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        audioSlider.rightAnchor.constraint(equalTo: upButton.leftAnchor, constant: -10).isActive = true
+        audioSlider.rightAnchor.constraint(equalTo: audioPlayTime.leftAnchor, constant: -10).isActive = true
         audioSlider.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
-        
         
         
 //        containerView.addSubview(inputTextView)
@@ -413,7 +438,8 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         else {
             
             print(sender.isSelected)
-            audioPlayButton.setImage(#imageLiteral(resourceName: "play1"), for: .normal)
+            audioPlayButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
+            pauseRecordedAudio()
         }
     }
     @objc func recordAudioButtonPressed(){
@@ -440,6 +466,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         recordAudioButton.isHidden = true
         upButton.isHidden = false
         deleteAudioButton.isHidden = false
+        audioPlayTime.isHidden = false
         finishRecording(success: true)
         
         
@@ -450,10 +477,12 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         audioPlayButton.isHidden = true
         slideToCancel.isHidden = true
         upButton.isHidden = true
+        audioPlayTime.isHidden = true
         deleteAudioButton.isHidden = true
         inputTextFiled.isHidden = false
         uploadImageView.isHidden = false
         recordAudioButton.isHidden = false
+        
 //        finishRecording(success: false)
         deleteAudioRecorded()
     }
@@ -463,11 +492,15 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         audioPlayButton.isHidden = true
         slideToCancel.isHidden = true
         upButton.isHidden = true
+        audioPlayTime.isHidden = true
         deleteAudioButton.isHidden = true
         inputTextFiled.isHidden = false
         uploadImageView.isHidden = false
         recordAudioButton.isHidden = false
-        finishRecording(success: true)
+//        finishRecording(success: true)
+        let audioFileUrl = getAudiFileURL()
+        handleAudioSendWith(url: audioFileUrl)
+        
         
     }
     //Attachment Button
@@ -770,12 +803,28 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         if let text = message.text{
             cell.bubbleWidthAnchor?.constant = estimatedFrameForText(text: text).width + 100
             cell.textView.isHidden = false
+            cell.audioSlider.isHidden = true
+            cell.playRecordedButton.isHidden = true
         } else if message.imageUrl != nil {
             cell.bubbleWidthAnchor?.constant = 200
             cell.textView.isHidden = true
+            cell.audioSlider.isHidden = true
+            cell.playRecordedButton.isHidden = true
+        } else if message.audioUrl != nil {
+            cell.audioSlider.isHidden = true
+            cell.playRecordedButton.isHidden = true
+            cell.textView.isHidden = true
+            cell.bubbleWidthAnchor?.constant = 250
+            cell.bubbleView.heightAnchor.constraint(equalToConstant: 70)
+        } else if message.videoStorageUrl != nil {
+            cell.audioSlider.isHidden = true
+            cell.playRecordedButton.isHidden = true
         }
-        cell.playVideoButton.isHidden = message.videoStorageUrl == nil
         
+        cell.playVideoButton.isHidden = message.videoStorageUrl == nil
+//        cell.playRecordedButton.isHidden = message.audioUrl == nil
+//        cell.audioSlider.isHidden = message.audioUrl == nil
+        cell.downloadAudioButton.isHidden = message.audioUrl == nil
         return cell
     }
 
@@ -1057,17 +1106,21 @@ var audioRecorder : AVAudioRecorder!
 var audioPlayer : AVAudioPlayer!
 var recordingSession: AVAudioSession!
 var settings   = [String : Any]()
-//var fileName = "audio_file.m4a"
+
 var fileName = NSUUID().uuidString + ".m4a"
 var toggleState = 1
 
-
+var audioTimer = Timer()
 var seconds = 0
 var secondsFraction = 0
 var timer = Timer()
-
+var audioPlayTimer = Timer()
+var audioPlayLabelTimer = Timer()
+var audioMinutes = 0
+var audioSeconds = 0
 var isTimerRunning = false
 var resumeTapped = false
+
 
 extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate{
 
@@ -1111,18 +1164,12 @@ extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudio
         
         // Audio Settings
         
-//        settings = [
-//            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-//            AVSampleRateKey: 12000,
-//            AVNumberOfChannelsKey: 1,
-//            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
-//        ]
-        settings = [
-        AVFormatIDKey: kAudioFormatAppleLossless,
-        AVEncoderAudioQualityKey: AVAudioQuality.max.rawValue,
-        AVEncoderBitRateKey: 32000,
-        AVNumberOfChannelsKey: 2,
-        AVSampleRateKey: 44100.0
+
+         settings = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 12000,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.low.rawValue
         ]
         
     }
@@ -1173,27 +1220,41 @@ extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudio
     
     func playRecordedAudio(){
         let url = getAudiFileURL()
+        
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord)
+                            audioPlayLabelTimer.invalidate()
+            
                             audioPlayer = try AVAudioPlayer(contentsOf: url)
-                            audioPlayer.volume = 1.0
+                            audioPlayer.volume = 10.0
                             audioPlayer?.delegate = self
+                            audioPlayer.stop()
+                            audioSlider.maximumValue = Float(audioPlayer.duration)
+                            audioPlayer.currentTime = TimeInterval(audioSlider.value)
                             audioPlayer?.prepareToPlay()
+                            audioTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateAudioSlider), userInfo: nil, repeats: true)
+            
                             audioPlayer?.play()
-//            audioPlayer.play()
+                            audioPlayLabelTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateAudioTimer), userInfo: nil, repeats: true)
+                            
+            
+
             print("audio playing")
         } catch {
             print("not nhplayi")
         }
-//        audioSlider.maximumValue = Float(audioPlayer.duration)
-        
-//        updateAudioTimer()
-        
     }
+    
+    
     func pauseRecordedAudio(){
         audioPlayer.pause()
         updateAudioTimer()
+        audioPlayLabelTimer.invalidate()
+        
+        
     }
+
+
     
     func deleteAudioRecorded(){
         let url = getAudiFileURL()
@@ -1204,26 +1265,43 @@ extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudio
         }
         
     }
+
+    @objc func changeAudioSliderValue(){
+        audioPlayer.stop()
+        audioPlayer.currentTime = TimeInterval(audioSlider.value)
+        audioPlayer.prepareToPlay()
+        audioPlayer.play()
+    }
     
+    @objc func updateAudioSlider(){
+        audioSlider.value = Float(audioPlayer.currentTime)
+    }
     
-    func updateAudioTimer() {
+    @objc func updateAudioTimer() {
+        print("update Audio Timer Playin")
         var currentTime = Int(audioPlayer.currentTime)
         var duration = Int(audioPlayer.duration)
         var total = currentTime - duration
         var totalString = String(total)
+        var maxTimer = Float(audioPlayer.duration)
         
-        var minutes = currentTime/60
-        var seconds = currentTime - minutes / 60
+        audioMinutes = currentTime/60
+        audioSeconds = currentTime - audioMinutes/60
+        print("update Audio Timer\(currentTime,duration,total,totalString,audioMinutes,audioSeconds)")
         
-//        playedTime.text = NSString(format: "%02d:%02d", minutes,seconds) as String
+        audioPlayTime.text = NSString(format: "%02d:%02d", audioMinutes,audioSeconds) as String
+        if audioPlayer.currentTime == audioPlayer.duration {
+            audioPlayLabelTimer.invalidate()
+        }
     }
     
     func handleAudioSendWith(url: URL) {
+        
 //        guard let fileUrl = URL(string: url) else {
 //            return
 //        }
-//        let fileName = NSUUID().uuidString + ".m4a"
-        
+       
+        print(url)
         let ref = Storage.storage().reference().child("message_voice").child(fileName)
         ref.putFile(from: url, metadata: nil) { (metadata, error) in
             if error != nil {
@@ -1239,20 +1317,10 @@ extension ChatLogController : UITextViewDelegate,AVAudioRecorderDelegate,AVAudio
             })
             }
         }
-//    func handleAudioPLay() {
-//        if let audioUrl = message?.audioUrl, let url = URL(string: audioUrl) {
-//            do {
-//                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord)
-//                audioPlayer = try AVAudioPlayer(contentsOf: url)
-//                audioPlayer?.delegate = self
-//                audioPlayer?.prepareToPlay()
-//                audioPlayer?.play()
-//                print("Audio ready to play")
-//            } catch let error {
-//                print(error.localizedDescription)
-//            }
-//        }
-//    }
+    
+    
+  
+
     
     ///////////////////////////////////////////////// TIMER
     

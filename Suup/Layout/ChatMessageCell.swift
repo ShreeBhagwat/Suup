@@ -36,10 +36,39 @@ class ChatMessageCell: UICollectionViewCell {
         button.addTarget(self, action: #selector(handleVideoPlay), for: .touchUpInside)
         return button
     }()
+    lazy var downloadAudioButton : UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(#imageLiteral(resourceName: "download"), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(downloadAudioWith), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var playRecordedButton : UIButton = {
+        let recordButton = UIButton(type: .system)
+        let image = UIImage(named: "play1")
+        recordButton.isUserInteractionEnabled = true
+        recordButton.setImage(image, for: .normal)
+        recordButton.translatesAutoresizingMaskIntoConstraints = false
+        bubbleView.addSubview(recordButton)
+        recordButton.addTarget(self, action: #selector(handleAudioPLay1), for: .touchUpInside)
+        return recordButton
+    }()
+    let audioSlider : UISlider = {
+        let audioSlider = UISlider(frame:CGRect(x: 0, y: 0, width: 300, height: 20))
+        audioSlider.translatesAutoresizingMaskIntoConstraints = false
+        audioSlider.minimumValue = 0
+        audioSlider.maximumValue = 100
+        audioSlider.isContinuous = true
+        
+        
+        return audioSlider
+    }()
     
     let avPlayerViewController = AVPlayerViewController()
     var playerLayer: AVPlayerLayer?
     var player:AVPlayer?
+  
     
     @objc func handleVideoPlay() {
         if let videoUrl = message?.videoStorageUrl, let url = URL(string: videoUrl){
@@ -50,10 +79,52 @@ class ChatMessageCell: UICollectionViewCell {
                 self.avPlayerViewController.player?.play()
             })
             try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
-            
         }
-     
 }
+
+    
+    var audioPlayer : AVAudioPlayer!
+    
+ 
+    var localAudioUrl : String!
+    @objc func downloadAudioWith(){
+        print("download audio button pressed")
+        let audioDownloadName = NSUUID().uuidString + "recievedAudio.m4a"
+        let url = message?.audioUrl
+        print(url)
+        let ref = Storage.storage().reference(forURL: url!)
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let documentsDirectory = paths[0]
+        let downloadAudioUrl =  documentsDirectory.appendingPathComponent(audioDownloadName)
+        let downloadTask = ref.write(toFile: downloadAudioUrl) { (url, error) in
+            if error != nil {
+                print(error)
+            } else {
+                self.localAudioUrl = (url?.absoluteString)!
+                self.downloadAudioButton.isHidden = true
+                self.playRecordedButton.isHidden = false
+                self.audioSlider.isHidden = false
+            }
+        }
+   
+    }
+    @objc func handleAudioPLay1() {
+        
+        print("Handel audio Play button pressed")
+        if  let url = URL(string: localAudioUrl) {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord)
+                 try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: [])
+                audioPlayer = try AVAudioPlayer(contentsOf: url, fileTypeHint: "aac")
+                audioPlayer?.prepareToPlay()
+                audioPlayer?.play()
+                print("Audio ready to play")
+            } catch let error {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         playerLayer?.removeFromSuperlayer()
@@ -80,6 +151,8 @@ class ChatMessageCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
+
+        view.isUserInteractionEnabled = true
        
         return view
     }()
@@ -88,7 +161,6 @@ class ChatMessageCell: UICollectionViewCell {
     let bubbleImageView : UIImageView = {
       let imageView = UIImageView()
         imageView.image = ChatMessageCell.grayBubbleImage
-        
         imageView.tintColor = UIColor(white: 0.96, alpha: 1)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -118,7 +190,6 @@ class ChatMessageCell: UICollectionViewCell {
         var messageTimeStamp: UILabel = {
         let messageTime = UILabel()
         messageTime.translatesAutoresizingMaskIntoConstraints = false
-//        messageTime.textColor = UIColor.lightGray
         messageTime.backgroundColor = UIColor.clear
         messageTime.font = UIFont.italicSystemFont(ofSize: 12)
         messageTime.layer.zPosition = 1
@@ -136,7 +207,6 @@ class ChatMessageCell: UICollectionViewCell {
     var bubbleWidthAnchor: NSLayoutConstraint?
     var bubbleViewRightAnchor: NSLayoutConstraint?
     var bubbleViewLeftAnchor: NSLayoutConstraint?
-    
     var bubbleImageWidthAnchor: NSLayoutConstraint?
     var bubbleImageViewRightAnchor: NSLayoutConstraint?
     var bubbleImageViewLeftAnchor: NSLayoutConstraint?
@@ -166,13 +236,28 @@ class ChatMessageCell: UICollectionViewCell {
         playVideoButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         playVideoButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
+        bubbleView.addSubview(playRecordedButton)
+        playRecordedButton.leftAnchor.constraint(equalTo: bubbleView.leftAnchor).isActive = true
+        playRecordedButton.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
+        playRecordedButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        playRecordedButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        bubbleView.addSubview(downloadAudioButton)
+
+
         //IOS 9 Constraints: x, y , width, height
+
+
+        downloadAudioButton.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
+        downloadAudioButton.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor).isActive = true
+        downloadAudioButton.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        downloadAudioButton.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        
+        //x,y,w,h
         profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
         profileImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
-        
-    
         
         
         //IOS 9 Constraints: x, y , width, height
@@ -209,6 +294,13 @@ class ChatMessageCell: UICollectionViewCell {
         textView.rightAnchor.constraint(equalTo: bubbleImageView.rightAnchor , constant: -10).isActive = true
 //        textView.widthAnchor.constraint(equalToConstant: 200).isActive = true
         textView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
+        
+        
+        bubbleView.addSubview(audioSlider)
+        audioSlider.leftAnchor.constraint(equalTo: playRecordedButton.rightAnchor, constant: 8 ).isActive = true
+        audioSlider.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
+        audioSlider.rightAnchor.constraint(equalTo: bubbleView.rightAnchor, constant: -10).isActive = true
+        audioSlider.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor).isActive = true
         
         //MessageTimeStamp Constraints
 //        messageTimeStamp.leftAnchor.constraint(equalTo: bubbleImageView.leftAnchor, constant: 20).isActive = true
