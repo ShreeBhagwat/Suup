@@ -12,6 +12,7 @@ import FirebaseCore
 import FirebaseDatabase
 import SVProgressHUD
 import Firebase
+import TransitionButton
 
 
 
@@ -22,6 +23,14 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
   
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor(hexString: "#76f7ee")
+        view.addSubview(createProfileLabel)
+        view.addSubview(profileNote)
+        view.addSubview(profilePicture)
+        view.addSubview(userName)
+        view.addSubview(doneButton)
+        
+        setUpViewController()
         
         profilePicture.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(addProfilePicture)))
         profilePicture.isUserInteractionEnabled = true
@@ -30,20 +39,70 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
         // Do any additional setup after loading the view.
     }
    
+    let createProfileLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Create Profile"
+        label.backgroundColor = UIColor.init(red: (1), green: (1), blue: (1), alpha: 0.3)
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 25
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 20.0)
+        
+        return label
+    }()
+    
+    let profileNote: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 2
+        label.text = "Enter below your Name and add a Profile Photo"
+        label.font = UIFont.systemFont(ofSize: 16.0)
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = UIColor.clear
+        
+        
+        return label
+    }()
+    
+    lazy var profilePicture:UIImageView = {
+        let profilePicture = UIImageView()
+        profilePicture.image = UIImage(named: "profile")
+        profilePicture.translatesAutoresizingMaskIntoConstraints = false
+        profilePicture.contentMode = .scaleAspectFit
 
-    @IBOutlet weak var NameText: UITextField!
+        profilePicture.clipsToBounds = true
+        return profilePicture
+    }()
+    
+    let userName : UITextField = {
+        let textFiled = UITextField()
+        textFiled.placeholder = "Enter Name"
+        textFiled.layer.cornerRadius = 20
+        textFiled.clipsToBounds = true
+        textFiled.backgroundColor = UIColor.white
+        textFiled.translatesAutoresizingMaskIntoConstraints = false
+       return textFiled
+    }()
+    
+    let doneButton : TransitionButton = {
+        let button = TransitionButton(type: .custom)
+        button.backgroundColor = UIColor.flatSkyBlue()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Done", for: .normal)
+        button.layer.cornerRadius = 20
+        button.addTarget(self, action: #selector(DoneButtonPressed), for: .touchUpInside)
+        
+        return button
+    }()
+
    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func addPhoto(_ sender: Any) {
-    }
-    @IBOutlet weak var profilePicture: UIImageView!
-    
-    
-    @IBAction func DoneButtonPressed(_ sender: UIButton) {
+    @objc func DoneButtonPressed() {
         let uid = Auth.auth().currentUser?.uid
         
         guard self.profilePicture.image != nil else{return}
@@ -61,7 +120,7 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
                     }
                     let profilePicUrl = url?.absoluteString
                     print("Profile Image successfully uploaded into storage with url: \(profilePicUrl ?? "" )")
-                    let values = ["userName": self.NameText.text!,"phoneNumber":Auth.auth().currentUser?.phoneNumber,"userId":Auth.auth().currentUser?.uid,"profileImageUrl": profilePicUrl]
+                    let values = ["userName": self.userName.text!,"phoneNumber":Auth.auth().currentUser?.phoneNumber,"userId":Auth.auth().currentUser?.uid,"profileImageUrl": profilePicUrl]
                     
                     self.registerUserIntoDatabaseWithUid(uid: uid!, values: values as [String : AnyObject])
                    
@@ -74,7 +133,7 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
     private func registerUserIntoDatabaseWithUid(uid: String, values:[String: AnyObject]){
         let usersDB = Database.database().reference().child("Users").child(uid)
         let userDiconary = ["userId":Auth.auth().currentUser?.uid ?? String.self,
-                            "userName": NameText.text!,
+                            "userName": userName.text!,
                             "phoneNumber":Auth.auth().currentUser?.phoneNumber! ?? String.self] as [String : Any]
         
        
@@ -83,10 +142,13 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
                 print(err as Any)
                 return
             }
-
+            
+            
             let user = Users()
             user.setValuesForKeys(values)
             self.messageController?.navBarWithUser(user: user)
+//            self.present(MessageController(), animated: true, completion: nil)
+            self.navigationController?.pushViewController(self.messageController!, animated: true)
         })
     }
     
@@ -118,7 +180,33 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
         print("Canceled")
         dismiss(animated: true, completion: nil)
     }
-
     
-   
+    func setUpViewController(){
+        createProfileLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        createProfileLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100).isActive = true
+        createProfileLabel.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        createProfileLabel.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        profileNote.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        profileNote.topAnchor.constraint(equalTo: createProfileLabel.bottomAnchor, constant: 20).isActive = true
+        profileNote.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        profileNote.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        
+        profilePicture.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
+        profilePicture.topAnchor.constraint(equalTo: profileNote.bottomAnchor, constant: 20).isActive = true
+        profilePicture.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        profilePicture.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        
+        userName.centerYAnchor.constraint(equalTo: profilePicture.centerYAnchor).isActive = true
+        userName.leftAnchor.constraint(equalTo: profilePicture.rightAnchor, constant: 10).isActive = true
+        userName.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        userName.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        doneButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        doneButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200).isActive = true
+        doneButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        doneButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+
+
+    }
 }

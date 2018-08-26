@@ -72,6 +72,7 @@ func connectToFCM(){
     
 }
 func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+    Auth.auth().setAPNSToken(deviceToken as Data, type: .prod)
     Messaging.messaging().apnsToken = deviceToken as Data
 
 }

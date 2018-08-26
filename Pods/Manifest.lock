@@ -77,6 +77,7 @@ PODS:
     - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (1.2.0)
   - Instructions (1.2.0)
+  - KWVerificationCodeView (0.2.0)
   - leveldb-library (1.20)
   - libPhoneNumber-iOS (0.9.13)
   - MEVHorizontalContacts (1.4)
@@ -86,7 +87,6 @@ PODS:
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
   - Protobuf (3.6.1)
-  - SACodedTextField (1.0)
   - SVProgressHUD (2.2.5)
   - TransitionButton (0.5.1)
 
@@ -101,8 +101,8 @@ DEPENDENCIES:
   - Firebase/Storage
   - FirebaseMessaging
   - Instructions (~> 1.2.0)
+  - KWVerificationCodeView
   - MEVHorizontalContacts
-  - SACodedTextField
   - SVProgressHUD
   - TransitionButton
 
@@ -125,12 +125,12 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMSessionFetcher
     - Instructions
+    - KWVerificationCodeView
     - leveldb-library
     - libPhoneNumber-iOS
     - MEVHorizontalContacts
     - nanopb
     - Protobuf
-    - SACodedTextField
     - SVProgressHUD
     - TransitionButton
 
@@ -152,15 +152,15 @@ SPEC CHECKSUMS:
   GoogleUtilities: 06b66f9567769a7958db20a92f0128b2843e49d5
   GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
   Instructions: 763c2452bd78e05d8f969a21c1cbc3c07deef33a
+  KWVerificationCodeView: 213c7303ba43ff5fabffa77f4f558a76225a8f85
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   libPhoneNumber-iOS: e444379ac18bbfbdefad571da735b2cd7e096caa
   MEVHorizontalContacts: e92c4e06c08c38f557f4dc805af2b78b0198248e
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
-  SACodedTextField: dc04d2b84ed0a141261c1080570e8df88816b289
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   TransitionButton: 20f92b3cc726b047e4df200fdab5307f33395a81
 
-PODFILE CHECKSUM: 8dfe46f03b166d5b8810c747ccb5d6ea4ea15639
+PODFILE CHECKSUM: eb9b59c011e417cc23f9c18b1b743c4717d92b93
 
 COCOAPODS: 1.5.3

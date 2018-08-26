@@ -19,7 +19,7 @@ pod 'TransitionButton'
 pod 'Instructions', '~> 1.2.0'
 pod 'MEVHorizontalContacts'
 pod "CTKFlagPhoneNumber"
-pod 'SACodedTextField'
+pod "KWVerificationCodeView"
 
 
 end

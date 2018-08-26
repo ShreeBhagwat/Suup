@@ -108,6 +108,7 @@ class PhoneAuthViewController: UIViewController, UITextFieldDelegate, CountryPic
                             print("error: \(String(describing: error?.localizedDescription))")
                         }else {
                             let defaults = UserDefaults.standard
+                            defaults.set(verificationID, forKey: "authVerificationID")
                            
                         }
                     }
@@ -160,8 +161,6 @@ class PhoneAuthViewController: UIViewController, UITextFieldDelegate, CountryPic
     var cc : String?
     func countryPhoneCodePicker(_ picker: CountryPicker, didSelectCountryWithName name: String, countryCode: String, phoneCode: String, flag: UIImage) {
         //todo
-    
-        
     }
     
 }

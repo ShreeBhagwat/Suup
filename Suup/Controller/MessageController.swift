@@ -11,12 +11,12 @@ import Firebase
 import UserNotifications
 import Contacts
 
-class MessageController: UITableViewController, UINavigationControllerDelegate, UISearchBarDelegate {
+class MessageController: UITableViewController,UINavigationControllerDelegate, UISearchBarDelegate {
     let cellId = "cellId"
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+    
         navigationItem.leftBarButtonItem  = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(logOut))
         let image = UIImage(named:"newMessageIcon")
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(newMessage))
@@ -24,6 +24,10 @@ class MessageController: UITableViewController, UINavigationControllerDelegate, 
         tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
         observeUserMessage()
 }
+    func setNavBar(){
+            let screenSize: CGRect = UIScreen.main.bounds
+            let navBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: 44))
+    }
 
     var messages = [Message]()
     var messageDictionary = [String:Message]()

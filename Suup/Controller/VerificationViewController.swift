@@ -12,17 +12,25 @@ import SVProgressHUD
 import ChameleonFramework
 import CTKFlagPhoneNumber
 import TransitionButton
-import SACodedTextField
+import KWVerificationCodeView
 
 class VerificationViewController: UIViewController {
+
+    var otpView = KWVerificationCodeView(frame: CGRect(x: 100, y: 300, width: 200, height: 60))
 
     @IBOutlet weak var VerificationCode: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(hexString: "#71f2da")
+        
+        otpView.digits = 6
+        otpView.textSize = 21.0
+        otpView.textColor = UIColor.black
+//        view.backgroundColor = UIColor(hexString: "#71f2da")
+        view.backgroundColor = UIColor(hexString: "#76f7ee")
         view.addSubview(verificationTitle)
         view.addSubview(verificationNote)
-        view.addSubview(verificationTextField)
+//        view.addSubview(verificationTextField)
+        view.addSubview(otpView)
         view.addSubview(verificationButton)
         
           setupVerificationViewController()
@@ -56,13 +64,6 @@ class VerificationViewController: UIViewController {
         return label
     }()
     
-    let verificationTextField : ActivationCodeTextField = {
-        let textFiled = ActivationCodeTextField()
-        textFiled.maxCodeLength = 6
-        textFiled.font = UIFont.systemFont(ofSize: 20.0)
-        textFiled.translatesAutoresizingMaskIntoConstraints = false
-        return textFiled
-    }()
     
     let verificationButton : TransitionButton = {
         let button = TransitionButton(type: .custom)
@@ -70,21 +71,20 @@ class VerificationViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Send OTP", for: .normal)
         button.layer.cornerRadius = 20
-//        button.addTarget(self, action: #selector(), for: .touchUpInside)
+        button.addTarget(self, action: #selector(Verify), for: .touchUpInside)
         
         return button
     }()
     
     
-    @IBAction func Verify(_ sender: Any) {
-        SVProgressHUD.show()
+    @objc func Verify() {
+        let otp:String = ("\(otpView.getVerificationCode())")
+        print(otp)
         let defaults = UserDefaults.standard
-
-        let credential: PhoneAuthCredential = PhoneAuthProvider.provider().credential(withVerificationID: defaults.string(forKey: "authverificationID")!, verificationCode: VerificationCode.text!)
+        let credential: PhoneAuthCredential = PhoneAuthProvider.provider().credential(withVerificationID: defaults.string(forKey: "authVerificationID")!, verificationCode: otp)
         Auth.auth().signInAndRetrieveData(with: credential) { (user, error) in
             if error != nil {
-                SVProgressHUD.dismiss()
-                let alert = UIAlertController(title: "Invalid Verification Code", message: "The Verification Code does Not Match, Please Try Again", preferredStyle: .alert)
+                let alert = UIAlertController(title: "Invalid Verification Code", message: "\(error)The Verification Code does Not Match, Please Try Again", preferredStyle: .alert)
 
                 let action = UIAlertAction(title: "Try Again", style: .default , handler: { (UIAlertAction) in
                     })
@@ -92,10 +92,10 @@ class VerificationViewController: UIViewController {
                 self.present(alert, animated: true, completion: nil)
 
             }else {
-                SVProgressHUD.dismiss()
                let userData = Auth.auth().currentUser?.phoneNumber
                 print("\(String(describing: userData))")
-                self.performSegue(withIdentifier: "goToLoggedin", sender: self)
+                let secondVC = LoginViewController()
+                self.present(secondVC, animated: true, completion: nil)
             }
         }
     }
@@ -117,17 +117,12 @@ class VerificationViewController: UIViewController {
         verificationNote.heightAnchor.constraint(equalToConstant: 100).isActive = true
         
         //////////////////////////////////////////////////////////////////
-        verificationTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        verificationTextField.topAnchor.constraint(equalTo: verificationNote.bottomAnchor, constant: 10).isActive = true
-        verificationTextField.widthAnchor.constraint(equalToConstant: 300).isActive = true
-        verificationTextField.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        
-        //////////////////////////////////////////////////////////////////
+
         verificationButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         verificationButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -300).isActive = true
         verificationButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
         verificationButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
+  
     }
 
 

@@ -7,13 +7,59 @@
 //
 
 import UIKit
-
+import TransitionButton
 class LoginViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        view.backgroundColor = UIColor(hexString: "#76f7ee")
+        view.addSubview(Label)
+        view.addSubview(createProfile)
+        setupViewController()
+        
+    }
+    
+    let Label: UILabel = {
+        let label = UILabel()
+        label.text = "Verification Successful !"
+        label.backgroundColor = UIColor.init(red: (1), green: (1), blue: (1), alpha: 0.3)
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 25
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 20.0)
+        
+        return label
+    }()
+    
+    let createProfile : TransitionButton = {
+        let button = TransitionButton(type: .custom)
+        button.backgroundColor = UIColor.flatSkyBlue()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Create Profile!", for: .normal)
+        button.layer.cornerRadius = 20
+        button.addTarget(self, action: #selector(createProfileButtonPressed), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    
+    func  setupViewController(){
+        Label.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        Label.topAnchor.constraint(equalTo: view.topAnchor, constant: 100).isActive = true
+        Label.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        Label.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        
+        createProfile.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        createProfile.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -300).isActive = true
+        createProfile.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        createProfile.heightAnchor.constraint(equalToConstant: 50).isActive = true
+    }
+    
+    @objc func createProfileButtonPressed(){
+        let secondVC = ProfileViewController()
+        self.present(secondVC, animated: true, completion: nil)
     }
 
     override func didReceiveMemoryWarning() {
