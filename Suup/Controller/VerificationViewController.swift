@@ -14,7 +14,7 @@ import CTKFlagPhoneNumber
 import TransitionButton
 import KWVerificationCodeView
 
-class VerificationViewController: UIViewController {
+class VerificationViewController: UIViewController , UINavigationControllerDelegate{
 
     var otpView = KWVerificationCodeView(frame: CGRect(x: 100, y: 300, width: 200, height: 60))
 
@@ -95,7 +95,7 @@ class VerificationViewController: UIViewController {
                let userData = Auth.auth().currentUser?.phoneNumber
                 print("\(String(describing: userData))")
                 let secondVC = LoginViewController()
-                self.present(secondVC, animated: true, completion: nil)
+                self.navigationController?.pushViewController(secondVC, animated: true)
             }
         }
     }

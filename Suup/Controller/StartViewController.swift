@@ -12,7 +12,7 @@ import Firebase
 import ChameleonFramework
 import TransitionButton
 
-class StartViewController: UIViewController {
+class StartViewController: UIViewController, UINavigationControllerDelegate{
     let startButton = TransitionButton()
 
     override func viewDidLoad() {
@@ -44,7 +44,7 @@ class StartViewController: UIViewController {
 //            DispatchQueue.main.async(execute: {
 //                self.startButton.stopAnimation(animationStyle: .expand, completion: {
                     let secondVC = PhoneAuthViewController()
-                    self.present(secondVC, animated: true, completion: nil)
+                    self.navigationController?.pushViewController(secondVC, animated: true)
               
 //            })
 //        }

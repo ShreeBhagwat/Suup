@@ -147,8 +147,8 @@ class ProfileViewController: UIViewController,UIImagePickerControllerDelegate,UI
             let user = Users()
             user.setValuesForKeys(values)
             self.messageController?.navBarWithUser(user: user)
-//            self.present(MessageController(), animated: true, completion: nil)
-            self.navigationController?.pushViewController(self.messageController!, animated: true)
+            let secondVC = MessageController()
+            self.navigationController?.pushViewController(secondVC, animated: true)
         })
     }
     

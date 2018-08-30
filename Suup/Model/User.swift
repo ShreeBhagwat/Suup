@@ -7,6 +7,14 @@
 //
 
 import Foundation
-struct User {
-     var userName:String?
+import Firebase
+import Contacts
+
+class User: NSObject {
+    
+    @objc  var id:String?
+    @objc  var phoneNumber:String?
+    @objc  var userName:String?
+    @objc  var UserId:String?
+
 }

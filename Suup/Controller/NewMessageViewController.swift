@@ -24,11 +24,12 @@ class NewMessageViewController: UITableViewController , UISearchResultsUpdating{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+     
         searchController.searchResultsUpdater = self
         searchController.searchBar.placeholder = "Search Users"
         searchController.obscuresBackgroundDuringPresentation = false
         definesPresentationContext = false
-        navigationItem.title = "Chats"
+        navigationItem.title = "New Message"
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelButton))
         if #available(iOS 11.0, *) {
             navigationItem.searchController = searchController
@@ -87,7 +88,6 @@ class NewMessageViewController: UITableViewController , UISearchResultsUpdating{
                         SVProgressHUD.dismiss()
                         }
                         } else {
-                                
                     }
                 }
         }

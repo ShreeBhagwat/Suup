@@ -57,7 +57,7 @@ class UserCell : UITableViewCell {
         let imageView = UIImageView()
         imageView.image = UIImage(named:"profile")
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 25
+        imageView.layer.cornerRadius = 15
         imageView.layer.masksToBounds = true
         imageView.contentMode = .scaleAspectFit
         return imageView
@@ -81,8 +81,8 @@ class UserCell : UITableViewCell {
         //Constraints X, Y, Width, Height
         profileImageView.leftAnchor.constraint(greaterThanOrEqualTo: self.leftAnchor, constant: 8).isActive = true
         profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        profileImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        profileImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        profileImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         //Constraints X, Y, Width, Height
         timeLabel.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true

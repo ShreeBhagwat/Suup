@@ -143,10 +143,20 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
     }()
     
     let cellId = "cellId"
-    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        UIGraphicsBeginImageContext(view.frame.size)
+        UIImage(named: "suupwall")?.draw(in: self.view.bounds)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        view.backgroundColor = UIColor.init(patternImage: image!)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "background")!)
+//        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "chatlog")!)
+        
+        
        startAudioSession()
        setupRecorder()
         collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 50, right: 0)
@@ -289,7 +299,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height:50)
-        containerView.backgroundColor = UIColor(hexString: "#fbfbfb")
+        containerView.backgroundColor = UIColor(hexString: "#fbfbfb").withAlphaComponent(0.7)
         
         
         uploadImageView.isUserInteractionEnabled = true
@@ -384,10 +394,6 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         upButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         upButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         upButton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
-        
-        
-      
-        
         
         containerView.addSubview(audioPlayTime)
         audioPlayTime.rightAnchor.constraint(equalTo: upButton.leftAnchor, constant: -8).isActive = true
@@ -923,6 +929,7 @@ class ChatLogController : UICollectionViewController, UITextFieldDelegate, UICol
         let properties = ["text":inputTextFiled.text!] as [String : Any]
         sendMessageWithProperties(properties: properties as [String : AnyObject])
         inputTextFiled.endEditing(true)
+    
     }
     
     private func sendMessageWithImage(imageUrl : String, image: UIImage){

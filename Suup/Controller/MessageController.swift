@@ -13,10 +13,16 @@ import Contacts
 
 class MessageController: UITableViewController,UINavigationControllerDelegate, UISearchBarDelegate {
     let cellId = "cellId"
+    
+    var messages = [Message]()
+    var messageDictionary = [String:Message]()
+    var items = [UIBarButtonItem]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
+           self.navigationController?.isToolbarHidden = false
+        setupToolBar()
         navigationItem.leftBarButtonItem  = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(logOut))
         let image = UIImage(named:"newMessageIcon")
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(newMessage))
@@ -24,14 +30,26 @@ class MessageController: UITableViewController,UINavigationControllerDelegate, U
         tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
         observeUserMessage()
 }
-    func setNavBar(){
-            let screenSize: CGRect = UIScreen.main.bounds
-            let navBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: 44))
+
+   func setupToolBar(){
+    let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+    let button3 = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(navigateToSettings))
+    let button2 = UIBarButtonItem(title: "Chats", style: .plain, target: self, action: nil)
+   let button1 =  UIBarButtonItem(title: "Contacts", style: .plain, target: self, action: #selector(navigateToContacts))
+   items = [button1,space,button2,space,button3]
+    self.toolbarItems = items
     }
-
-    var messages = [Message]()
-    var messageDictionary = [String:Message]()
-
+    
+    @objc func navigateToSettings(){
+        print("Settings button pressed")
+        let settingsVC = SettingsViewController()
+        self.navigationController?.pushViewController(settingsVC, animated: true)
+    }
+    @objc func navigateToContacts(){
+        let contactVC = ContactsViewController()
+        self.navigationController?.pushViewController(contactVC, animated: true)
+    }
+  
     func observeUserMessage(){
         guard let uid = Auth.auth().currentUser?.uid else {
             return

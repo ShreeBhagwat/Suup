@@ -14,7 +14,7 @@ import TransitionButton
 
 
 
-class PhoneAuthViewController: UIViewController, UITextFieldDelegate, CountryPickerDelegate {
+class PhoneAuthViewController: UIViewController, UITextFieldDelegate, CountryPickerDelegate, UINavigationControllerDelegate {
  
     
   
@@ -114,7 +114,7 @@ class PhoneAuthViewController: UIViewController, UITextFieldDelegate, CountryPic
                     }
                       self.sendButton.stopAnimation(animationStyle: .expand, completion: {
                         let secondVC = VerificationViewController()
-                        self.present(secondVC, animated: true, completion: nil)
+                        self.navigationController?.pushViewController(secondVC, animated: true)
             })
             })
          }

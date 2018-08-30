@@ -8,7 +8,7 @@
 
 import UIKit
 import TransitionButton
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController , UINavigationControllerDelegate{
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +59,7 @@ class LoginViewController: UIViewController {
     
     @objc func createProfileButtonPressed(){
         let secondVC = ProfileViewController()
-        self.present(secondVC, animated: true, completion: nil)
+        self.navigationController?.pushViewController(secondVC, animated: true)
     }
 
     override func didReceiveMemoryWarning() {
